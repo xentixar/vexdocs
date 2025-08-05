@@ -154,20 +154,6 @@ Vexdocs includes a powerful, custom-built markdown parser with extensive feature
 - **Code syntax highlighting**: 50+ programming languages supported
 - **Custom containers**: Warning, info, tip, and danger callouts
 
-### Example Markdown
-
-```markdown
-# Getting Started
-
-Welcome to **Vexdocs**! Here's how to create *beautiful* documentation.
-
-## Code Example
-
-\`\`\`javascript
-const vexdocs = require('vexdocs');
-vexdocs.serve({ port: 3000 });
-\`\`\`
-
 ## Features List
 
 - ✅ Multi-version support
@@ -284,34 +270,6 @@ Create custom themes by overriding CSS variables:
 }
 ```
 
-### Search Configuration
-Customize search behavior in `config.json`:
-
-```json
-{
-  "navigation": {
-    "expandableGroups": true
-  },
-  "seo": {
-    "siteName": "Your Project Docs",
-    "ogImage": "/assets/og-image.png"
-  }
-}
-```
-
-### Custom Plugins
-Extend Vexdocs with custom JavaScript:
-
-```javascript
-// assets/js/custom.js
-window.vexdocs.addPlugin({
-  name: 'customFeature',
-  init: function() {
-    // Your custom functionality
-  }
-});
-```
-
 ## 🌍 Browser Support
 
 Vexdocs is built with modern web standards and supports:
@@ -357,7 +315,6 @@ npm test
 - 📖 **Documentation**: Check out our comprehensive [documentation](docs/)
 - 🐛 **Bug Reports**: [Open an issue](https://github.com/xentixar/vexdocs/issues)
 - 💡 **Feature Requests**: [Start a discussion](https://github.com/xentixar/vexdocs/discussions)
-- 💬 **Community**: Join our [Discord server](https://discord.gg/vexdocs)
 
 ## 📄 License
 
