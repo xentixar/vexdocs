@@ -1,13 +1,12 @@
 {
   "title": "Vexdocs",
-  "description": "A modern documentation tool with multi-version support and markdown rendering",
+  "description": "A modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering",
   "versions": {
-    "v2.0": "Latest",
-    "v1.0": "Stable"
+    "v1.0": "Latest"
   },
-  "defaultVersion": "v2.0",
+  "defaultVersion": "v1.0",
   "theme": {
-    "primaryColor": "#007acc",
-    "sidebarWidth": "300px"
+    "primaryColor": "#2563eb",
+    "sidebarWidth": "320px"
   }
 }

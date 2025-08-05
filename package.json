@@ -1,7 +1,7 @@
 {
   "name": "vexdocs",
   "version": "1.0.0",
-  "description": "A modern documentation tool with multi-version support and markdown rendering",
+  "description": "A modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering. Create beautiful documentation websites without any external dependencies.",
   "main": "src/server.js",
   "bin": {
     "vexdocs": "./vexdocs"
@@ -10,11 +10,41 @@
     "start": "./vexdocs serve",
     "dev": "./vexdocs dev",
     "build": "./vexdocs build",
-    "serve": "./vexdocs serve"
+    "serve": "./vexdocs serve",
+    "clean": "./vexdocs clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["docs", "documentation", "markdown", "versioning", "vexdocs", "static-site"],
-  "author": "",
+  "keywords": [
+    "documentation",
+    "docs",
+    "markdown",
+    "static-site-generator",
+    "multi-version",
+    "vexdocs",
+    "documentation-tool",
+    "responsive",
+    "search",
+    "no-dependencies"
+  ],
+  "author": "Vexdocs Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xentixar/vexdocs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xentixar/vexdocs/issues"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "src/",
+    "assets/",
+    "vexdocs",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {},
   "devDependencies": {}
 }

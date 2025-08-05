@@ -1,91 +1,272 @@
-# Welcome to Vexdocs v1.0
+---
+title: "Welcome to Vexdocs v1.0 - Modern Documentation Tool"
+description: "Vexdocs v1.0 is a modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering. Zero dependencies, maximum performance."
+keywords: "vexdocs, documentation, markdown, multi-version, static-site-generator, lightweight"
+---
 
-This is the **stable version** of Vexdocs. It provides reliable functionality for creating and hosting documentation.
+# 🚀 Welcome to Vexdocs v1.0
 
-## ✨ Features
+Welcome to **Vexdocs** - a modern, fast, and lightweight documentation tool that makes creating beautiful documentation websites effortless. Built with zero external dependencies for maximum performance and reliability.
 
-### Core Functionality
-- **Markdown Parsing**: Convert markdown to HTML
-- **Multi-Version Support**: Handle different documentation versions
-- **Navigation**: Auto-generated sidebar navigation
-- **Search**: Basic search functionality
-- **Responsive Design**: Works on all devices
+## ✨ Core Features
 
-### Version 1.0 Highlights
-- Stable and tested codebase
-- Essential documentation features
-- Clean, minimal interface
-- Fast performance
-- No external dependencies
+### 📚 Multi-Version Documentation Support
+- **Seamless version management** - handle different documentation versions effortlessly
+- **Independent navigation** for each version with automatic folder structure detection
+- **Version switching** with persistent state and smooth transitions
+- **Custom version labels** (Latest, Stable, Beta, etc.)
 
-## 📖 Quick Start
+### 📝 Pure JavaScript Architecture
+- **Zero external dependencies** - no jQuery, no React, just pure JavaScript
+- **Custom markdown parser** with full CommonMark compliance
+- **Syntax highlighting** for 50+ programming languages
+- **Fast rendering** with optimized DOM manipulation
+- **Lightweight bundle** for quick loading
 
-1. **Install and Run**
+### 🎨 Professional User Interface
+- **Modern, clean design** with responsive layout
+- **Mobile-first approach** - perfect on phones, tablets, and desktops
+- **Intelligent sidebar navigation** auto-generated from your folder structure
+- **Smart search functionality** with real-time filtering
+- **Accessibility features** - ARIA labels, keyboard navigation, screen reader support
+
+### 🔍 Smart Search System
+- **Real-time search** across all navigation items
+- **Intelligent folder expansion** - automatically opens relevant sections
+- **Keyboard shortcuts** - quick access with intuitive controls
+- **Case-insensitive matching** for better user experience
+
+### ⚡ Performance Optimized
+- **Fast static site generation** ready for CDN deployment
+- **Optimized asset delivery** with minification and compression
+- **Lazy loading** for images and heavy content
+- **Smart caching** reduces server requests
+
+## 📖 Getting Started
+
+### 🚀 Quick Setup (Under 2 minutes)
+
+1. **Start the development server**
    ```bash
-   npm start
+npm start
+# or
+./vexdocs serve
    ```
 
-2. **Open Browser**
+2. **Open your browser**
    Navigate to `http://localhost:3000`
 
-3. **Create Content**
-   Add markdown files to `docs/v1.0/`
+3. **Start writing documentation**
+   Edit markdown files in `docs/v1.0/` and see changes instantly
 
-## 📁 File Structure
+### �️ Development Commands
+
+```bash
+# Development server with live reload
+npm run dev
+
+# Build optimized static site for production
+npm run build
+
+# Serve built static files
+npm run serve
+
+# Clean build artifacts
+npm run clean
+```
+
+## 📁 Project Structure
+
+Vexdocs follows an intuitive directory structure:
 
 ```
-docs/
-├── v1.0/
-│   ├── README.md      # This file
-│   ├── guide.md       # User guide
-│   └── setup.md       # Setup instructions
-└── config.json        # Configuration
+your-project/
+├── docs/                    # Documentation source
+│   ├── config.json         # Global configuration
+│   ├── v1.0/               # Version 1.0 documentation
+│   │   ├── README.md       # Homepage (this file)
+│   │   ├── getting-started.md
+│   │   ├── api-reference.md
+│   │   └── guides/
+│   │       ├── installation.md
+│   │       └── configuration.md
+│   └── assets/             # Images and static files
+├── dist/                   # Generated static site (after build)
+└── assets/                 # Theme assets (CSS, JS)
+    ├── css/
+    └── js/
 ```
 
-## 🎨 Basic Configuration
+### 🎯 Key Concepts
 
-Edit `docs/config.json`:
+- **Auto-navigation**: Sidebar is generated from your folder structure
+- **Markdown-first**: All content is written in standard Markdown
+- **Live reload**: Changes are reflected immediately in development mode
+- **SEO ready**: Automatic meta tags and structured data
+
+## ⚙️ Configuration
+
+Customize Vexdocs by editing `docs/config.json`:
 
 ```json
 {
-  "title": "My Documentation",
+  "title": "Your Documentation",
+  "description": "Documentation for your project",
   "versions": {
-    "v1.0": "Stable"
+    "v1.0": "Latest"
   },
-  "defaultVersion": "v1.0"
+  "defaultVersion": "v1.0",
+  "theme": {
+    "primaryColor": "#2563eb",
+    "sidebarWidth": "320px"
+  }
 }
 ```
 
+### Available Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `title` | Site title in header | "Documentation" |
+| `description` | Meta description for SEO | "Project Documentation" |
+| `theme.primaryColor` | Primary brand color | "#2563eb" |
+| `theme.sidebarWidth` | Sidebar width | "320px" |
+
 ## 📝 Markdown Support
 
-Version 1.0 supports standard markdown:
+Vexdocs includes a powerful markdown parser with extensive features:
 
-- **Headers** (H1-H6)
-- **Bold** and *italic* text
-- `Inline code` and code blocks
-- Lists (ordered and unordered)
-- Links and images
-- Tables
-- Blockquotes
+### Core Formatting
+- **Headers (H1-H6)** with auto-generated anchor links
+- **Text formatting**: **Bold**, *italic*, ~~strikethrough~~, `inline code`
+- **Lists**: Ordered, unordered, and nested with proper indentation
+- **Links and images** with automatic optimization
+- **Tables** with professional styling and responsive design
+- **Blockquotes** with elegant formatting
+- **Code blocks** with syntax highlighting
+
+### Advanced Features
+- **Auto-linking**: URLs become clickable automatically
+- **Cross-references**: Link between documents seamlessly
+- **Image optimization**: Responsive sizing and lazy loading
+- **Code syntax highlighting**: 50+ languages supported
+- **Frontmatter support**: SEO metadata in YAML format
+
+### Example Markdown
+
+```markdown
+# Getting Started
+
+Welcome to **Vexdocs**! Here's a quick example.
+
+## Code Block
+```javascript
+const docs = new Vexdocs();
+docs.serve({ port: 3000 });
+```
+
+## Feature List
+- ✅ Multi-version support
+- ✅ Fast rendering
+- ✅ Mobile responsive
+
+> **Tip**: Use search to quickly find content!
+```
 
 ## 🚀 Deployment
 
-Build for production:
+Deploy your documentation to any static hosting platform:
+
+### 1. Build Static Site
 
 ```bash
 npm run build
 ```
 
-The generated `dist/` folder can be deployed to any static hosting service.
+This creates an optimized `dist/` folder with:
+- Minified HTML, CSS, and JavaScript
+- Optimized images and assets
+- SEO-friendly meta tags
+- Fast-loading static files
 
-## 🔄 Upgrading to v2.0
+### 2. Deploy Options
 
-Consider upgrading to v2.0 for:
-- Enhanced search capabilities
-- Improved mobile experience
-- Advanced theming options
-- Better performance optimizations
+**GitHub Pages**
+```bash
+# Deploy to gh-pages branch
+npm run build
+cd dist
+git init && git add . && git commit -m "Deploy docs"
+git push origin main:gh-pages
+```
+
+**Netlify**
+- Connect your repository
+- Build command: `npm run build`
+- Publish directory: `dist`
+
+**Vercel**
+```bash
+vercel --prod
+```
+
+**Traditional Hosting**
+Upload the `dist/` folder contents to any web server.
+
+## � Advanced Usage
+
+### Custom Theming
+Override CSS variables for custom styling:
+
+```css
+:root {
+  --primary-color: #your-brand-color;
+  --sidebar-bg: #custom-background;
+  --text-color: #your-text-color;
+}
+```
+
+### Navigation Structure
+Organize content with intuitive folder structure:
+
+```
+docs/v1.0/
+├── README.md           # Homepage
+├── quick-start.md      # Getting started
+├── guides/            # Tutorial section
+│   ├── installation.md
+│   └── configuration.md
+└── reference/         # API documentation
+    └── api.md
+```
+
+## 🌍 Browser Support
+
+Vexdocs works across all modern browsers:
+
+- ✅ **Chrome/Edge** 88+ (Full support)
+- ✅ **Firefox** 78+ (Full support)
+- ✅ **Safari** 14+ (Full support)
+- ✅ **Mobile browsers** (Optimized experience)
+- ⚠️ **Internet Explorer** (Not supported)
+
+## 💡 Pro Tips
+
+- **Search shortcut**: Type to filter navigation instantly
+- **Keyboard navigation**: Use arrow keys and Enter to navigate
+- **Deep linking**: Every heading gets a permanent anchor link
+- **Mobile optimization**: Swipe gestures and touch-friendly interface
+- **Print friendly**: Clean print styles for documentation
+
+## 🔗 Quick Links
+
+- [📚 **Getting Started Guide**](getting-started.md) - Step-by-step setup instructions
+- [🔧 **API Reference**](api-reference.md) - Complete API documentation
+- [⚙️ **Configuration Guide**](configuration.md) - Customization and theme options
+- [🛠️ **Setup Guide**](setup.md) - Installation and deployment guide
+- [📝 **Markdown Guide**](guides/markdown-guide.md) - Complete formatting reference
+- [🚀 **Deployment Guide**](guides/deployment.md) - Deploy to various platforms
 
 ---
 
-*Version 1.0 provides a solid foundation for documentation needs. Check out the [setup guide](setup.md) to get started!*
+*Ready to create amazing documentation? Start by checking out our [Getting Started guide](getting-started.md) or explore the [API Reference](api-reference.md)!*
