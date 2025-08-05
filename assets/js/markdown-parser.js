@@ -3,7 +3,7 @@ class MarkdownParser {
         this.rules = {
             // Block elements
             heading: /^(#{1,6})\s+(.+)$/gm,
-            codeBlock: /```(\w+)?\n([\s\S]*?)```/g,
+            codeBlock: /```(\w*)[\r\n]?([\s\S]*?)[\r\n]?```/g,
             blockquote: /^>\s*(.+)$/gm,
             horizontalRule: /^-{3,}|^\*{3,}|^_{3,}$/gm,
             list: /^(\s*)([*+-]|\d+\.)\s+(.+)$/gm,
@@ -25,20 +25,39 @@ class MarkdownParser {
         
         let html = markdown;
         
-        // Process block elements first
-        html = this.parseCodeBlocks(html);
+        const codeBlocks = [];
+        html = html.replace(this.rules.codeBlock, (match, language, code) => {
+            const lang = language || '';
+            let cleanCode = code;
+            if (cleanCode.startsWith('\n')) {
+                cleanCode = cleanCode.substring(1);
+            }
+            if (cleanCode.endsWith('\n')) {
+                cleanCode = cleanCode.substring(0, cleanCode.length - 1);
+            }
+            
+            const escapedCode = this.escapeHtml(cleanCode);
+            const codeBlockHtml = `<div class="code-wrapper"><pre><code class="language-${lang}">${escapedCode}</code></pre></div>`;
+            const placeholder = `<!--CODEBLOCK${codeBlocks.length}-->`;
+            codeBlocks.push(codeBlockHtml);
+            return placeholder;
+        });
+        
         html = this.parseHeadings(html);
         html = this.parseBlockquotes(html);
         html = this.parseHorizontalRules(html);
         html = this.parseLists(html);
         html = this.parseTables(html);
         
-        // Process inline elements
         html = this.parseInlineElements(html);
         
-        // Process paragraphs last
         html = this.parseParagraphs(html);
         
+        codeBlocks.forEach((codeBlockHtml, index) => {
+            const placeholder = `<!--CODEBLOCK${index}-->`;
+            html = html.replace(new RegExp(placeholder, 'g'), codeBlockHtml);
+        });
+
         return html.trim();
     }
 
@@ -47,14 +66,6 @@ class MarkdownParser {
             const level = hashes.length;
             const id = this.generateId(content);
             return `<h${level} id="${id}">${this.parseInlineElements(content)}</h${level}>`;
-        });
-    }
-
-    parseCodeBlocks(text) {
-        return text.replace(this.rules.codeBlock, (match, language, code) => {
-            const lang = language || '';
-            const escapedCode = this.escapeHtml(code.trim());
-            return `<pre><code class="language-${lang}">${escapedCode}</code></pre>`;
         });
     }
 
@@ -102,7 +113,7 @@ class MarkdownParser {
 
         for (let line of lines) {
             const listMatch = line.match(/^(\s*)([*+-]|\d+\.)\s+(.+)$/);
-            
+
             if (listMatch) {
                 const [, indent, marker, content] = listMatch;
                 const indentLevel = indent.length;
@@ -171,7 +182,7 @@ class MarkdownParser {
         if (rows.length < 2) return rows.join('\n');
 
         let html = '<table>\n';
-        
+
         // Header row
         const headerCells = rows[0].split('|').slice(1, -1).map(cell => cell.trim());
         html += '<thead>\n<tr>\n';
@@ -200,7 +211,7 @@ class MarkdownParser {
 
     parseInlineElements(text) {
         if (!text) return '';
-        
+
         // Parse in order: images, links, bold, italic, strikethrough, inline code
         text = text.replace(this.rules.image, (match, alt, src) => {
             return `<img src="${src}" alt="${alt}" />`;
@@ -239,16 +250,17 @@ class MarkdownParser {
 
         for (let line of lines) {
             const trimmedLine = line.trim();
-            
-            // Skip empty lines and already processed elements
-            if (!trimmedLine || 
-                trimmedLine.startsWith('<') || 
+
+            // Skip empty lines and already processed elements (including code block placeholders)
+            if (!trimmedLine ||
+                trimmedLine.startsWith('<') ||
                 trimmedLine.match(/^#{1,6}\s/) ||
                 trimmedLine.match(/^>\s/) ||
                 trimmedLine.match(/^(\s*)([*+-]|\d+\.)\s/) ||
                 trimmedLine.match(/^\|/) ||
-                trimmedLine.match(/^-{3,}|^\*{3,}|^_{3,}$/)) {
-                
+                trimmedLine.match(/^-{3,}|^\*{3,}|^_{3,}$/) ||
+                trimmedLine.match(/^<!--CODEBLOCK\d+-->$/)) {
+
                 if (inParagraph) {
                     result.push(`<p>${this.parseInlineElements(paragraphContent.join(' '))}</p>`);
                     inParagraph = false;
@@ -273,9 +285,9 @@ class MarkdownParser {
 
     generateId(text) {
         return text.toLowerCase()
-                  .replace(/[^\w\s-]/g, '')
-                  .replace(/\s+/g, '-')
-                  .trim();
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .trim();
     }
 
     escapeHtml(text) {
