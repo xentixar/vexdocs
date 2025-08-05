@@ -386,7 +386,7 @@ class DocsServer {
     <meta id="ogUrl" property="og:url" content="">
     <meta id="ogTitle" property="og:title" content="${this.config.title}">
     <meta id="ogDescription" property="og:description" content="${this.config.description}">
-        <meta id="ogImage" property="og:image" content="/assets/images/logo-circle.svg">
+    <meta id="ogImage" property="og:image" content="/assets/images/logo.svg">
     <meta property="og:site_name" content="${this.config.title}">
     
     <!-- Twitter -->
@@ -394,7 +394,7 @@ class DocsServer {
     <meta id="twitterUrl" property="twitter:url" content="">
     <meta id="twitterTitle" property="twitter:title" content="${this.config.title}">
     <meta id="twitterDescription" property="twitter:description" content="${this.config.description}">
-    <meta id="twitterImage" property="twitter:image" content="/assets/images/logo-circle.svg">
+    <meta id="twitterImage" property="twitter:image" content="/assets/images/logo.svg">
     
     <!-- Favicon and App Icons -->
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
@@ -424,7 +424,7 @@ class DocsServer {
             <div class="header-content">
                 <div class="header-title">
                     <a href="/" class="header-link">
-                        <img src="/assets/images/logo-circle.svg" alt="VexDocs" class="header-logo" width="40" height="40">
+                        <img src="/assets/images/logo.svg" alt="${this.config.title}" class="header-logo" width="40" height="40">
                         <span class="header-text">${this.config.title}</span>
                     </a>
                 </div>
@@ -468,7 +468,7 @@ class DocsServer {
         });
 
         server.listen(this.port, () => {
-            console.log(`\n📚 Vexdocs server running at http://localhost:${this.port}`);
+            console.log(`\n📚 ${this.config.title} server running at http://localhost:${this.port}`);
             console.log(`📁 Serving docs from: ${this.docsDir}`);
             console.log(`🎨 Professional UI enabled`);
             if (this.isDev) {
