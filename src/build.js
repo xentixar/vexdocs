@@ -147,9 +147,11 @@ class StaticSiteBuilder {
                         children: this.buildDirectoryTree(fullPath, version, itemRelativePath)
                     });
                 } else if (entry.name.endsWith('.md')) {
+                    const title = this.extractTitleFromMarkdown(fullPath);
                     items.push({
                         type: 'file',
                         name: entry.name.replace('.md', ''),
+                        title: title,
                         path: itemRelativePath
                     });
                 }
@@ -161,18 +163,118 @@ class StaticSiteBuilder {
         return items;
     }
 
+    extractTitleFromMarkdown(filePath) {
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            
+            // Check for frontmatter title
+            const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+                if (titleMatch) {
+                    return titleMatch[1].trim().replace(/^["']|["']$/g, '');
+                }
+            }
+            
+            // Check for first H1 heading
+            const h1Match = content.match(/^#\s+(.+)$/m);
+            if (h1Match) {
+                return h1Match[1].trim();
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error extracting title from markdown:', error);
+            return null;
+        }
+    }
+
+    extractSEOFromMarkdown(filePath) {
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            const seo = {
+                title: null,
+                description: null,
+                keywords: null,
+                author: null,
+                canonical: null,
+                ogTitle: null,
+                ogDescription: null,
+                ogImage: null,
+                twitterCard: null,
+                twitterTitle: null,
+                twitterDescription: null,
+                twitterImage: null
+            };
+            
+            // Check for frontmatter
+            const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                
+                // Extract SEO fields from frontmatter
+                const fields = {
+                    title: /^(?:title|seo_title):\s*(.+)$/m,
+                    description: /^(?:description|seo_description):\s*(.+)$/m,
+                    keywords: /^(?:keywords|seo_keywords):\s*(.+)$/m,
+                    author: /^author:\s*(.+)$/m,
+                    canonical: /^canonical:\s*(.+)$/m,
+                    ogTitle: /^og_title:\s*(.+)$/m,
+                    ogDescription: /^og_description:\s*(.+)$/m,
+                    ogImage: /^og_image:\s*(.+)$/m,
+                    twitterCard: /^twitter_card:\s*(.+)$/m,
+                    twitterTitle: /^twitter_title:\s*(.+)$/m,
+                    twitterDescription: /^twitter_description:\s*(.+)$/m,
+                    twitterImage: /^twitter_image:\s*(.+)$/m
+                };
+                
+                Object.keys(fields).forEach(key => {
+                    const match = frontmatter.match(fields[key]);
+                    if (match) {
+                        seo[key] = match[1].trim().replace(/^["']|["']$/g, '');
+                    }
+                });
+            }
+            
+            // Fallback to first H1 for title if not in frontmatter
+            if (!seo.title) {
+                const h1Match = content.match(/^#\s+(.+)$/m);
+                if (h1Match) {
+                    seo.title = h1Match[1].trim();
+                }
+            }
+            
+            // Generate description from first paragraph if not provided
+            if (!seo.description) {
+                const contentWithoutFrontmatter = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '');
+                const paragraphMatch = contentWithoutFrontmatter.match(/^(?!#)(.*?)(?:\n\n|\n#|$)/m);
+                if (paragraphMatch && paragraphMatch[1].trim()) {
+                    seo.description = paragraphMatch[1].trim().substring(0, 160);
+                }
+            }
+            
+            return seo;
+        } catch (error) {
+            console.error('Error extracting SEO from markdown:', error);
+            return {};
+        }
+    }
+
     generateContentFiles(version, apiDir) {
         const versionDir = path.join(this.docsDir, version);
         const contentDir = path.join(apiDir, 'content', version);
+        const seoDir = path.join(apiDir, 'seo', version);
         
         if (!fs.existsSync(versionDir)) return;
         
         fs.mkdirSync(contentDir, { recursive: true });
+        fs.mkdirSync(seoDir, { recursive: true });
         
-        this.processMarkdownFiles(versionDir, contentDir, '');
+        this.processMarkdownFiles(versionDir, contentDir, seoDir, '');
     }
 
-    processMarkdownFiles(sourceDir, outputDir, relativePath) {
+    processMarkdownFiles(sourceDir, outputDir, seoDir, relativePath) {
         const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
         
         entries.forEach(entry => {
@@ -181,16 +283,40 @@ class StaticSiteBuilder {
             
             if (entry.isDirectory()) {
                 const subOutputDir = path.join(outputDir, entry.name);
+                const subSeoDir = path.join(seoDir, entry.name);
                 fs.mkdirSync(subOutputDir, { recursive: true });
-                this.processMarkdownFiles(sourcePath, subOutputDir, entryRelativePath);
+                fs.mkdirSync(subSeoDir, { recursive: true });
+                this.processMarkdownFiles(sourcePath, subOutputDir, subSeoDir, entryRelativePath);
             } else if (entry.name.endsWith('.md')) {
                 const content = fs.readFileSync(sourcePath, 'utf8');
-                const outputPath = path.join(outputDir, entry.name + '.json');
+                const seoData = this.extractSEOFromMarkdown(sourcePath);
                 
+                // Generate content file
+                const outputPath = path.join(outputDir, entry.name + '.json');
                 fs.writeFileSync(outputPath, JSON.stringify({
                     content,
                     path: entryRelativePath
                 }, null, 2));
+                
+                // Generate SEO file
+                const seoOutputPath = path.join(seoDir, entry.name + '.json');
+                
+                // Set fallbacks
+                if (!seoData.title) {
+                    seoData.title = this.config.title;
+                }
+                if (!seoData.description) {
+                    seoData.description = this.config.description;
+                }
+                
+                // Set OpenGraph and Twitter fallbacks
+                seoData.ogTitle = seoData.ogTitle || seoData.title;
+                seoData.ogDescription = seoData.ogDescription || seoData.description;
+                seoData.twitterTitle = seoData.twitterTitle || seoData.title;
+                seoData.twitterDescription = seoData.twitterDescription || seoData.description;
+                seoData.twitterCard = seoData.twitterCard || 'summary';
+                
+                fs.writeFileSync(seoOutputPath, JSON.stringify(seoData, null, 2));
             }
         });
     }
@@ -248,17 +374,50 @@ class StaticSiteBuilder {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${this.config.title}</title>
-    <meta name="description" content="${this.config.description}">
+    <title id="pageTitle">${this.config.title}</title>
+    <meta id="pageDescription" name="description" content="${this.config.description}">
+    <meta id="pageKeywords" name="keywords" content="">
+    <meta id="pageAuthor" name="author" content="">
+    <link id="pageCanonical" rel="canonical" href="">
+    
+    <!-- Open Graph / Facebook -->
+    <meta id="ogType" property="og:type" content="website">
+    <meta id="ogUrl" property="og:url" content="">
+    <meta id="ogTitle" property="og:title" content="${this.config.title}">
+    <meta id="ogDescription" property="og:description" content="${this.config.description}">
+    <meta id="ogImage" property="og:image" content="">
+    <meta property="og:site_name" content="${this.config.title}">
+    
+    <!-- Twitter -->
+    <meta id="twitterCard" property="twitter:card" content="summary">
+    <meta id="twitterUrl" property="twitter:url" content="">
+    <meta id="twitterTitle" property="twitter:title" content="${this.config.title}">
+    <meta id="twitterDescription" property="twitter:description" content="${this.config.description}">
+    <meta id="twitterImage" property="twitter:image" content="">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
     <div id="app">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        
         <header class="header">
             <div class="header-content">
-                <h1 class="header-title">${this.config.title}</h1>
+                <h1 class="header-title">
+                    <a href="/" class="header-link">${this.config.title}</a>
+                </h1>
                 <div class="version-selector">
-                    <select id="versionSelect">
+                    <select id="versionSelect" aria-label="Select documentation version">
                         <!-- Versions will be populated by JavaScript -->
                     </select>
                 </div>
@@ -266,16 +425,16 @@ class StaticSiteBuilder {
         </header>
         
         <div class="container">
-            <aside class="sidebar">
+            <aside class="sidebar" id="sidebar">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search documentation...">
+                    <input type="text" id="searchInput" placeholder="Search documentation..." aria-label="Search documentation">
                 </div>
-                <nav class="navigation" id="navigation">
+                <nav class="navigation" id="navigation" role="navigation" aria-label="Documentation navigation">
                     <!-- Navigation will be populated by JavaScript -->
                 </nav>
             </aside>
             
-            <main class="content">
+            <main class="content" role="main">
                 <div class="content-wrapper">
                     <div id="markdownContent" class="markdown-content">
                         <!-- Content will be populated by JavaScript -->
@@ -318,6 +477,11 @@ class StaticSiteBuilder {
                     const contentPath = queryParams.get('path') || 'README.md';
                     jsonUrl = \`/api/content/\${contentVersion}/\${contentPath}.json\`;
                     break;
+                case 'seo':
+                    const seoVersion = queryParams.get('version') || '${this.config.defaultVersion}';
+                    const seoPath = queryParams.get('path') || 'README.md';
+                    jsonUrl = \`/api/seo/\${seoVersion}/\${seoPath}.json\`;
+                    break;
                 default:
                     throw new Error('API endpoint not found');
             }
@@ -334,6 +498,25 @@ class StaticSiteBuilder {
                     return new Response(JSON.stringify({
                         content: '# Page Not Found\\n\\nThe requested page could not be found.',
                         path: queryParams.get('path') || 'README.md'
+                    }), {
+                        ok: true,
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                } else if (endpoint === 'seo') {
+                    return new Response(JSON.stringify({
+                        title: 'Page Not Found',
+                        description: 'The requested page could not be found.',
+                        keywords: null,
+                        author: null,
+                        canonical: null,
+                        ogTitle: 'Page Not Found',
+                        ogDescription: 'The requested page could not be found.',
+                        ogImage: null,
+                        twitterCard: 'summary',
+                        twitterTitle: 'Page Not Found',
+                        twitterDescription: 'The requested page could not be found.',
+                        twitterImage: null
                     }), {
                         ok: true,
                         status: 200,

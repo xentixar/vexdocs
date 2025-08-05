@@ -25,6 +25,8 @@ class MarkdownParser {
         
         let html = markdown;
         
+        html = this.removeFrontmatter(html);
+        
         // Store code blocks with placeholders
         const codeBlocks = [];
         html = html.replace(this.rules.codeBlock, (match, language, code) => {
@@ -515,6 +517,14 @@ class MarkdownParser {
         }
         
         return parts.join('');
+    }
+
+    removeFrontmatter(text) {
+        const frontmatterMatch = text.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
+        if (frontmatterMatch) {
+            return text.substring(frontmatterMatch[0].length);
+        }
+        return text;
     }
 
     escapeHtml(text) {

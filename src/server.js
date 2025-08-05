@@ -100,6 +100,14 @@ class DocsServer {
                 res.end(JSON.stringify({ content, path: contentPath }));
                 break;
 
+            case 'seo':
+                const seoVersion = query.version || this.config.defaultVersion;
+                const seoPath = query.path || 'README.md';
+                const seoData = this.getSEOData(seoVersion, seoPath);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(seoData));
+                break;
+
             default:
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('API endpoint not found');
@@ -202,6 +210,77 @@ class DocsServer {
         }
     }
 
+    extractSEOFromMarkdown(filePath) {
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            const seo = {
+                title: null,
+                description: null,
+                keywords: null,
+                author: null,
+                canonical: null,
+                ogTitle: null,
+                ogDescription: null,
+                ogImage: null,
+                twitterCard: null,
+                twitterTitle: null,
+                twitterDescription: null,
+                twitterImage: null
+            };
+            
+            // Check for frontmatter
+            const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                
+                // Extract SEO fields from frontmatter
+                const fields = {
+                    title: /^(?:title|seo_title):\s*(.+)$/m,
+                    description: /^(?:description|seo_description):\s*(.+)$/m,
+                    keywords: /^(?:keywords|seo_keywords):\s*(.+)$/m,
+                    author: /^author:\s*(.+)$/m,
+                    canonical: /^canonical:\s*(.+)$/m,
+                    ogTitle: /^og_title:\s*(.+)$/m,
+                    ogDescription: /^og_description:\s*(.+)$/m,
+                    ogImage: /^og_image:\s*(.+)$/m,
+                    twitterCard: /^twitter_card:\s*(.+)$/m,
+                    twitterTitle: /^twitter_title:\s*(.+)$/m,
+                    twitterDescription: /^twitter_description:\s*(.+)$/m,
+                    twitterImage: /^twitter_image:\s*(.+)$/m
+                };
+                
+                Object.keys(fields).forEach(key => {
+                    const match = frontmatter.match(fields[key]);
+                    if (match) {
+                        seo[key] = match[1].trim().replace(/^["']|["']$/g, '');
+                    }
+                });
+            }
+            
+            // Fallback to first H1 for title if not in frontmatter
+            if (!seo.title) {
+                const h1Match = content.match(/^#\s+(.+)$/m);
+                if (h1Match) {
+                    seo.title = h1Match[1].trim();
+                }
+            }
+            
+            // Generate description from first paragraph if not provided
+            if (!seo.description) {
+                const contentWithoutFrontmatter = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '');
+                const paragraphMatch = contentWithoutFrontmatter.match(/^(?!#)(.*?)(?:\n\n|\n#|$)/m);
+                if (paragraphMatch && paragraphMatch[1].trim()) {
+                    seo.description = paragraphMatch[1].trim().substring(0, 160);
+                }
+            }
+            
+            return seo;
+        } catch (error) {
+            console.error('Error extracting SEO from markdown:', error);
+            return {};
+        }
+    }
+
     getMarkdownContent(version, filePath) {
         const fullPath = path.join(this.docsDir, version, filePath);
         
@@ -222,14 +301,101 @@ class DocsServer {
         return '# Page Not Found\n\nThe requested page could not be found.';
     }
 
+    getSEOData(version, filePath) {
+        const fullPath = path.join(this.docsDir, version, filePath);
+        let actualPath = fullPath;
+        
+        try {
+            if (fs.existsSync(fullPath)) {
+                actualPath = fullPath;
+            } else if (!filePath.endsWith('.md')) {
+                // Try adding .md extension
+                const mdPath = fullPath + '.md';
+                if (fs.existsSync(mdPath)) {
+                    actualPath = mdPath;
+                } else {
+                    // Return default SEO data for non-existent files
+                    return {
+                        title: 'Page Not Found',
+                        description: 'The requested page could not be found.',
+                        keywords: null,
+                        author: null,
+                        canonical: null,
+                        ogTitle: null,
+                        ogDescription: null,
+                        ogImage: null,
+                        twitterCard: null,
+                        twitterTitle: null,
+                        twitterDescription: null,
+                        twitterImage: null
+                    };
+                }
+            }
+            
+            const seoData = this.extractSEOFromMarkdown(actualPath);
+            
+            // Set fallbacks
+            if (!seoData.title) {
+                seoData.title = this.config.title;
+            }
+            if (!seoData.description) {
+                seoData.description = this.config.description;
+            }
+            
+            // Set OpenGraph and Twitter fallbacks
+            seoData.ogTitle = seoData.ogTitle || seoData.title;
+            seoData.ogDescription = seoData.ogDescription || seoData.description;
+            seoData.twitterTitle = seoData.twitterTitle || seoData.title;
+            seoData.twitterDescription = seoData.twitterDescription || seoData.description;
+            seoData.twitterCard = seoData.twitterCard || 'summary';
+            
+            return seoData;
+        } catch (error) {
+            console.error('Error getting SEO data:', error);
+            return {
+                title: this.config.title,
+                description: this.config.description,
+                keywords: null,
+                author: null,
+                canonical: null,
+                ogTitle: this.config.title,
+                ogDescription: this.config.description,
+                ogImage: null,
+                twitterCard: 'summary',
+                twitterTitle: this.config.title,
+                twitterDescription: this.config.description,
+                twitterImage: null
+            };
+        }
+    }
+
     generateMainHTML() {
         return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${this.config.title}</title>
-    <meta name="description" content="${this.config.description}">
+    <title id="pageTitle">${this.config.title}</title>
+    <meta id="pageDescription" name="description" content="${this.config.description}">
+    <meta id="pageKeywords" name="keywords" content="">
+    <meta id="pageAuthor" name="author" content="">
+    <link id="pageCanonical" rel="canonical" href="">
+    
+    <!-- Open Graph / Facebook -->
+    <meta id="ogType" property="og:type" content="website">
+    <meta id="ogUrl" property="og:url" content="">
+    <meta id="ogTitle" property="og:title" content="${this.config.title}">
+    <meta id="ogDescription" property="og:description" content="${this.config.description}">
+    <meta id="ogImage" property="og:image" content="">
+    <meta property="og:site_name" content="${this.config.title}">
+    
+    <!-- Twitter -->
+    <meta id="twitterCard" property="twitter:card" content="summary">
+    <meta id="twitterUrl" property="twitter:url" content="">
+    <meta id="twitterTitle" property="twitter:title" content="${this.config.title}">
+    <meta id="twitterDescription" property="twitter:description" content="${this.config.description}">
+    <meta id="twitterImage" property="twitter:image" content="">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700&display=swap" rel="stylesheet">
@@ -248,9 +414,9 @@ class DocsServer {
         
         <header class="header">
             <div class="header-content">
-                <h1 class="header-title">
+                <div class="header-title">
                     <a href="/" class="header-link">${this.config.title}</a>
-                </h1>
+                </div>
                 <div class="version-selector">
                     <select id="versionSelect" aria-label="Select documentation version">
                         <!-- Versions will be populated by JavaScript -->

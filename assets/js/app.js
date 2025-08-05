@@ -274,10 +274,64 @@ class DocsApp {
             const response = await fetch(`/api/content?version=${this.currentVersion}&path=${path}`);
             const data = await response.json();
             
+            await this.updateSEO(path);
+            
             this.renderContent(data.content);
         } catch (error) {
             console.error('Failed to load content:', error);
             this.showError(`Failed to load "${path}"`);
+        }
+    }
+
+    async updateSEO(path) {
+        try {
+            const response = await fetch(`/api/seo?version=${this.currentVersion}&path=${path}`);
+            const seo = await response.json();
+            
+            // Update title
+            document.title = seo.title;
+            this.updateMetaTag('pageTitle', 'id', seo.title, 'textContent');
+            
+            // Update basic meta tags
+            this.updateMetaTag('pageDescription', 'name', seo.description, 'content');
+            this.updateMetaTag('pageKeywords', 'name', seo.keywords, 'content');
+            this.updateMetaTag('pageAuthor', 'name', seo.author, 'content');
+            
+            // Update canonical URL
+            if (seo.canonical) {
+                this.updateMetaTag('pageCanonical', 'rel', seo.canonical, 'href');
+            } else {
+                this.updateMetaTag('pageCanonical', 'rel', window.location.href, 'href');
+            }
+            
+            // Update Open Graph tags
+            this.updateMetaTag('ogUrl', 'property', window.location.href, 'content');
+            this.updateMetaTag('ogTitle', 'property', seo.ogTitle, 'content');
+            this.updateMetaTag('ogDescription', 'property', seo.ogDescription, 'content');
+            this.updateMetaTag('ogImage', 'property', seo.ogImage, 'content');
+            
+            // Update Twitter tags
+            this.updateMetaTag('twitterCard', 'property', seo.twitterCard, 'content');
+            this.updateMetaTag('twitterUrl', 'property', window.location.href, 'content');
+            this.updateMetaTag('twitterTitle', 'property', seo.twitterTitle, 'content');
+            this.updateMetaTag('twitterDescription', 'property', seo.twitterDescription, 'content');
+            this.updateMetaTag('twitterImage', 'property', seo.twitterImage, 'content');
+            
+        } catch (error) {
+            console.error('Failed to update SEO:', error);
+        }
+    }
+
+    updateMetaTag(elementId, attribute, content, updateAttribute) {
+        if (!content) return;
+        
+        const element = document.getElementById(elementId);
+        if (element) {
+            if (updateAttribute === 'textContent') {
+                element.textContent = content;
+            } else {
+                element.setAttribute(updateAttribute, content);
+            }
         }
     }
 

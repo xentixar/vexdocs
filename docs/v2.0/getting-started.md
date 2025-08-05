@@ -1,3 +1,13 @@
+---
+title: "Getting Started with Vexdocs v2.0 - Documentation Tool"
+description: "Quick start guide for Vexdocs v2.0. Learn how to install, configure, and create beautiful documentation with our modern documentation tool."
+keywords: "vexdocs, documentation, getting started, installation, markdown, multi-version"
+author: "Vexdocs Team"
+og_title: "Get Started with Vexdocs v2.0"
+og_description: "Create beautiful, multi-version documentation sites with Vexdocs. Modern UI, fast search, and mobile-friendly design."
+twitter_card: "summary"
+---
+
 # Getting Started with Vexdocs v2.0
 
 This guide will help you get up and running with Vexdocs quickly.
