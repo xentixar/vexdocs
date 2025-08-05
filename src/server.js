@@ -248,7 +248,9 @@ class DocsServer {
         
         <header class="header">
             <div class="header-content">
-                <h1 class="header-title">${this.config.title}</h1>
+                <h1 class="header-title">
+                    <a href="/" class="header-link">${this.config.title}</a>
+                </h1>
                 <div class="version-selector">
                     <select id="versionSelect" aria-label="Select documentation version">
                         <!-- Versions will be populated by JavaScript -->

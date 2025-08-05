@@ -25,6 +25,7 @@ class MarkdownParser {
         
         let html = markdown;
         
+        // Store code blocks with placeholders
         const codeBlocks = [];
         html = html.replace(this.rules.codeBlock, (match, language, code) => {
             const lang = language || '';
@@ -49,19 +50,29 @@ class MarkdownParser {
             return placeholder;
         });
         
+        // Store tables with placeholders
+        const tables = [];
+        html = this.parseTablesWithPlaceholders(html, tables);
+        
         html = this.parseHeadings(html);
         html = this.parseBlockquotes(html);
         html = this.parseHorizontalRules(html);
         html = this.parseLists(html);
-        html = this.parseTables(html);
         
         html = this.parseInlineElements(html);
         
         html = this.parseParagraphs(html);
         
+        // Restore code blocks
         codeBlocks.forEach((codeBlockHtml, index) => {
             const placeholder = `<!--CODEBLOCK${index}-->`;
             html = html.replace(new RegExp(placeholder, 'g'), codeBlockHtml);
+        });
+        
+        // Restore tables
+        tables.forEach((tableHtml, index) => {
+            const placeholder = `<!--TABLE${index}-->`;
+            html = html.replace(new RegExp(placeholder, 'g'), tableHtml);
         });
 
         return html.trim();
@@ -161,7 +172,7 @@ class MarkdownParser {
         let tableRows = [];
 
         for (let line of lines) {
-            if (line.match(/\|(.+)\|/)) {
+            if (line.trim().match(/^\|.*\|$/)) {
                 if (!inTable) {
                     inTable = true;
                     tableRows = [];
@@ -169,7 +180,8 @@ class MarkdownParser {
                 tableRows.push(line);
             } else {
                 if (inTable) {
-                    result.push(this.buildTable(tableRows));
+                    const tableHtml = this.buildTable(tableRows);
+                    result.push(tableHtml);
                     inTable = false;
                     tableRows = [];
                 }
@@ -178,7 +190,44 @@ class MarkdownParser {
         }
 
         if (inTable) {
-            result.push(this.buildTable(tableRows));
+            const tableHtml = this.buildTable(tableRows);
+            result.push(tableHtml);
+        }
+
+        return result.join('\n');
+    }
+
+    parseTablesWithPlaceholders(text, tables) {
+        const lines = text.split('\n');
+        let result = [];
+        let inTable = false;
+        let tableRows = [];
+
+        for (let line of lines) {
+            if (line.trim().match(/^\|.*\|$/)) {
+                if (!inTable) {
+                    inTable = true;
+                    tableRows = [];
+                }
+                tableRows.push(line);
+            } else {
+                if (inTable) {
+                    const tableHtml = this.buildTable(tableRows);
+                    const placeholder = `<!--TABLE${tables.length}-->`;
+                    tables.push(tableHtml);
+                    result.push(placeholder);
+                    inTable = false;
+                    tableRows = [];
+                }
+                result.push(line);
+            }
+        }
+
+        if (inTable) {
+            const tableHtml = this.buildTable(tableRows);
+            const placeholder = `<!--TABLE${tables.length}-->`;
+            tables.push(tableHtml);
+            result.push(placeholder);
         }
 
         return result.join('\n');
@@ -190,10 +239,10 @@ class MarkdownParser {
         let html = '<table>\n';
 
         // Header row
-        const headerCells = rows[0].split('|').slice(1, -1).map(cell => cell.trim());
+        const headerCells = rows[0].trim().split('|').slice(1, -1).map(cell => cell.trim());
         html += '<thead>\n<tr>\n';
         headerCells.forEach(cell => {
-            html += `<th>${this.parseInlineElements(cell)}</th>\n`;
+            html += `<th>${this.escapeHtml(cell)}</th>\n`;
         });
         html += '</tr>\n</thead>\n';
 
@@ -201,10 +250,10 @@ class MarkdownParser {
         if (rows.length > 2) {
             html += '<tbody>\n';
             for (let i = 2; i < rows.length; i++) {
-                const dataCells = rows[i].split('|').slice(1, -1).map(cell => cell.trim());
+                const dataCells = rows[i].trim().split('|').slice(1, -1).map(cell => cell.trim());
                 html += '<tr>\n';
                 dataCells.forEach(cell => {
-                    html += `<td>${this.parseInlineElements(cell)}</td>\n`;
+                    html += `<td>${this.escapeHtml(cell)}</td>\n`;
                 });
                 html += '</tr>\n';
             }
@@ -257,7 +306,7 @@ class MarkdownParser {
         for (let line of lines) {
             const trimmedLine = line.trim();
 
-            // Skip empty lines and already processed elements (including code block placeholders)
+            // Skip empty lines and already processed elements (including code block and table placeholders)
             if (!trimmedLine ||
                 trimmedLine.startsWith('<') ||
                 trimmedLine.match(/^#{1,6}\s/) ||
@@ -265,7 +314,8 @@ class MarkdownParser {
                 trimmedLine.match(/^(\s*)([*+-]|\d+\.)\s/) ||
                 trimmedLine.match(/^\|/) ||
                 trimmedLine.match(/^-{3,}|^\*{3,}|^_{3,}$/) ||
-                trimmedLine.match(/^<!--CODEBLOCK\d+-->$/)) {
+                trimmedLine.match(/^<!--CODEBLOCK\d+-->$/) ||
+                trimmedLine.match(/^<!--TABLE\d+-->$/)) {
 
                 if (inParagraph) {
                     result.push(`<p>${this.parseInlineElements(paragraphContent.join(' '))}</p>`);
@@ -473,9 +523,10 @@ class MarkdownParser {
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
-            "'": '&#39;'
+            "'": '&#39;',
+            '`': '&#96;'
         };
-        return text.replace(/[&<>"']/g, char => htmlEscapes[char]);
+        return text.replace(/[&<>"'`]/g, char => htmlEscapes[char]);
     }
 }
 
