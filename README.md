@@ -6,7 +6,7 @@ A modern, fast, and lightweight documentation tool with multi-version support an
 
 - 📚 **Multi-version documentation support** - Seamlessly manage and switch between different documentation versions
 - 📝 **Pure JavaScript markdown renderer** - Zero external dependencies for fast, reliable rendering
-- 🎨 **Professional UI** - Modern, clean design with responsive layout and dark/light theme support
+- 🎨 **Professional UI** - Modern, clean design with responsive layout and light theme support
 - 🔍 **Smart search functionality** - Real-time filtering with intelligent navigation and keyboard shortcuts
 - 📱 **Mobile-first responsive design** - Optimized experience across all devices and screen sizes
 - 🚀 **Fast static site generation** - Build optimized static sites ready for CDN deployment
@@ -151,7 +151,7 @@ Vexdocs includes a powerful, custom-built markdown parser with extensive feature
 - **Image optimization**: Automatic alt text and responsive sizing
 - **Table of contents**: Auto-generated from headers
 - **Cross-references**: Link between documents and versions
-- **Code syntax highlighting**: 50+ programming languages supported
+- **Code syntax highlighting**: 5+ programming languages supported
 - **Custom containers**: Warning, info, tip, and danger callouts
 
 ## Features List
