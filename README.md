@@ -381,6 +381,6 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 **Made with ❤️ by the Vexdocs team**
 
-[Website](https://vexdocs.dev) • [Documentation](docs/) • [GitHub](https://github.com/xentixar/vexdocs) • [Twitter](https://twitter.com/vexdocs)
+[Documentation](docs/) • [GitHub](https://github.com/xentixar/vexdocs)
 
 </div>
