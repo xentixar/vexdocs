@@ -107,6 +107,7 @@ Configure Vexdocs by creating a `docs/config.json` file. Here's a complete examp
 {
   "title": "Your Project Documentation",
   "description": "Comprehensive documentation for your amazing project",
+  "baseUrl": "https://docs.yourproject.com",
   "versions": {
     "v2.1": "Latest",
     "v2.0": "Stable",

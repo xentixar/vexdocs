@@ -1,6 +1,7 @@
 {
   "title": "Vexdocs",
   "description": "A modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering",
+  "baseUrl": "http://localhost:3000",
   "versions": {
     "v1.0": "Latest"
   },

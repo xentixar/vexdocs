@@ -146,6 +146,7 @@ Edit `docs/config.json` to customize your site:
 {
   "title": "My Project Documentation",
   "description": "Comprehensive documentation for my project",
+  "baseUrl": "https://docs.myproject.com",
   "versions": {
     "v1.0": "Latest"
   },

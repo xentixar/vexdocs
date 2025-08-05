@@ -18,6 +18,7 @@ Vexdocs uses a single configuration file `docs/config.json` to control all aspec
 {
   "title": "My Documentation",
   "description": "Complete guide to my project",
+  "baseUrl": "https://docs.myproject.com",
   "versions": {
     "v1.0": "Latest",
     "v0.9": "Previous"
@@ -38,14 +39,22 @@ Vexdocs uses a single configuration file `docs/config.json` to control all aspec
 |----------|------|---------|-------------|
 | `title` | string | "Documentation" | Main site title shown in header and browser title |
 | `description` | string | "Project Documentation" | Site description used for SEO meta tags |
+| `baseUrl` | string | "http://localhost:3000" | Base URL for your documentation site (used for sitemap and robots.txt generation) |
 
 **Example:**
 ```json
 {
   "title": "Awesome Project Docs",
-  "description": "Complete documentation for the Awesome Project - installation, configuration, and API reference"
+  "description": "Complete documentation for the Awesome Project - installation, configuration, and API reference",
+  "baseUrl": "https://docs.myproject.com"
 }
 ```
+
+**Base URL Guidelines:**
+- Use the full URL including protocol (https:// or http://)
+- Do not include trailing slash
+- Use production URL for deployed sites
+- Use localhost for development
 
 ### Version Management
 
@@ -191,6 +200,42 @@ author: "Your Name"
 }
 ```
 
+### Sitemap & Robots.txt Generation
+
+Vexdocs automatically generates `sitemap.xml` and `robots.txt` files during the build process to help search engines discover and index your documentation.
+
+**Automatic Generation:**
+- **Sitemap**: Lists all documentation pages with proper priority and change frequency
+- **Robots.txt**: Allows search engine crawling with sitemap reference
+- **Base URL**: Uses the `baseUrl` configuration for absolute URLs
+
+**Generated Files:**
+```
+vexdocs/
+├── sitemap.xml      # XML sitemap for search engines
+└── robots.txt       # Robot crawling instructions
+```
+
+**Sitemap Features:**
+- **Page Priority**: Higher priority for main pages (README.md files)
+- **Change Frequency**: Optimized based on content type
+- **Last Modified**: Uses file modification time
+- **Clean URLs**: Proper URL structure for better SEO
+
+**robots.txt Content:**
+```
+User-agent: *
+Allow: /
+
+Sitemap: https://your-domain.com/sitemap.xml
+```
+
+**SEO Benefits:**
+- Faster search engine discovery
+- Better indexing of all documentation pages
+- Improved search visibility
+- Professional SEO setup
+
 ## 🎛️ Advanced Configuration
 
 ### Complete Configuration Example
@@ -199,6 +244,7 @@ author: "Your Name"
 {
   "title": "MyProject Documentation",
   "description": "Comprehensive documentation for MyProject - installation guides, API reference, tutorials, and best practices",
+  "baseUrl": "https://docs.myproject.com",
   "versions": {
     "v1.0": "Latest",
     "v0.9": "Stable"

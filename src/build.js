@@ -18,6 +18,7 @@ class StaticSiteBuilder {
             return {
                 title: 'Documentation',
                 description: 'Project Documentation',
+                baseUrl: 'http://localhost:3000',
                 versions: { 'v1.0': 'Latest' },
                 defaultVersion: 'v1.0',
                 theme: {
@@ -46,6 +47,12 @@ class StaticSiteBuilder {
         
         // Generate HTML pages for each route
         this.generatePages();
+        
+        // Generate sitemap.xml
+        this.generateSitemap();
+        
+        // Generate robots.txt
+        this.generateRobotsTxt();
         
         console.log('✅ Static site built successfully!');
         console.log(`📁 Output directory: ${this.outputDir}`);
@@ -559,6 +566,96 @@ class StaticSiteBuilder {
     <script src="/assets/js/app.js"></script>
 </body>
 </html>`;
+    }
+
+    generateSitemap() {
+        console.log('🗺️  Generating sitemap.xml...');
+        
+        const baseUrl = this.config.baseUrl || 'https://example.com';
+        const urls = [];
+        
+        // Add main homepage
+        urls.push({
+            loc: baseUrl,
+            priority: '1.0',
+            changefreq: 'daily'
+        });
+        
+        // Add version pages
+        Object.keys(this.config.versions).forEach(version => {
+            const navigation = this.buildNavigation(version);
+            const pages = this.extractPages(navigation);
+            
+            // Add version homepage
+            urls.push({
+                loc: `${baseUrl}/${version}`,
+                priority: '0.8',
+                changefreq: 'weekly'
+            });
+            
+            // Add all pages for this version
+            pages.forEach(page => {
+                let pagePath = page.path.replace(/\.md$/, '');
+                
+                // Special handling for README files
+                if (path.basename(pagePath) === 'README') {
+                    pagePath = path.dirname(pagePath);
+                    if (pagePath === '.') {
+                        return; // Skip root README as it's already added as version homepage
+                    } else {
+                        pagePath = path.join(version, path.dirname(pagePath));
+                    }
+                } else {
+                    pagePath = path.join(version, pagePath);
+                }
+                
+                urls.push({
+                    loc: `${baseUrl}/${pagePath}`,
+                    priority: '0.7',
+                    changefreq: 'weekly'
+                });
+            });
+        });
+        
+        // Generate XML sitemap
+        const sitemap = this.generateSitemapXml(urls);
+        fs.writeFileSync(path.join(this.outputDir, 'sitemap.xml'), sitemap);
+    }
+
+    generateSitemapXml(urls) {
+        const urlElements = urls.map(url => {
+            const lastmod = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+            return `  <url>
+    <loc>${url.loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
+  </url>`;
+        }).join('\n');
+
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlElements}
+</urlset>`;
+    }
+
+    generateRobotsTxt() {
+        console.log('🤖 Generating robots.txt...');
+        
+        const baseUrl = this.config.baseUrl || 'https://example.com';
+        const robotsContent = `User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: ${baseUrl}/sitemap.xml
+
+# Disallow API endpoints from indexing
+Disallow: /api/
+
+# Allow assets
+Allow: /assets/`;
+
+        fs.writeFileSync(path.join(this.outputDir, 'robots.txt'), robotsContent);
     }
 }
 

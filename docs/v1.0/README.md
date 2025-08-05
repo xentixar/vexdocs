@@ -112,6 +112,7 @@ Customize Vexdocs by editing `docs/config.json`:
 {
   "title": "Your Documentation",
   "description": "Documentation for your project",
+  "baseUrl": "https://docs.yourproject.com",
   "versions": {
     "v1.0": "Latest"
   },
@@ -129,6 +130,7 @@ Customize Vexdocs by editing `docs/config.json`:
 |--------|-------------|---------|
 | `title` | Site title in header | "Documentation" |
 | `description` | Meta description for SEO | "Project Documentation" |
+| `baseUrl` | Base URL for sitemap and robots.txt | "http://localhost:3000" |
 | `theme.primaryColor` | Primary brand color | "#2563eb" |
 | `theme.sidebarWidth` | Sidebar width | "320px" |
 
