@@ -531,6 +531,65 @@ body {
     font-weight: 500;
 }
 
+.language-indicator {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #6c757d;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 5;
+    opacity: 0.8;
+    font-family: var(--font-family-mono);
+}
+
+/* Syntax Highlighting Colors */
+.syntax-keyword {
+    color: #0066cc;
+    font-weight: 600;
+}
+
+.syntax-string {
+    color: #008000;
+}
+
+.syntax-comment {
+    color: #6a737d;
+    font-style: italic;
+}
+
+.syntax-number {
+    color: #d73a49;
+}
+
+.syntax-function {
+    color: #6f42c1;
+    font-weight: 500;
+}
+
+.syntax-selector {
+    color: #e36209;
+    font-weight: 500;
+}
+
+.syntax-attribute {
+    color: #6f42c1;
+}
+
+.syntax-tag {
+    color: #22863a;
+}
+
+.syntax-variable {
+    color: #005cc5;
+    font-weight: 500;
+}
+
 .markdown-content pre code {
     background: none !important;
     padding: 0 !important;
@@ -1056,6 +1115,13 @@ body {
     .copy-button svg {
         width: 12px;
         height: 12px;
+    }
+
+    .language-indicator {
+        top: 8px;
+        left: 8px;
+        font-size: 9px;
+        padding: 1px 4px;
     }
 
     .markdown-content table {

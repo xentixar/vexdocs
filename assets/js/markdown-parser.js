@@ -37,6 +37,7 @@ class MarkdownParser {
             }
             
             const escapedCode = this.escapeHtml(cleanCode);
+            const highlightedCode = lang ? this.highlightCode(escapedCode, lang) : escapedCode;
             const codeBlockHtml = `<div class="code-wrapper">
                 <button class="copy-button" onclick="copyToClipboard(this)" aria-label="Copy code">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -46,7 +47,7 @@ class MarkdownParser {
                     <span class="copy-text">Copy</span>
                     <span class="copy-success" style="display: none;">Copied!</span>
                 </button>
-                <pre><code class="language-${lang}">${escapedCode}</code></pre>
+                <pre><code class="language-${lang}">${highlightedCode}</code></pre>
             </div>`;
             const placeholder = `<!--CODEBLOCK${codeBlocks.length}-->`;
             codeBlocks.push(codeBlockHtml);
@@ -298,6 +299,103 @@ class MarkdownParser {
             .replace(/[^\w\s-]/g, '')
             .replace(/\s+/g, '-')
             .trim();
+    }
+
+    highlightCode(code, language) {
+        const languagePatterns = {
+            javascript: {
+                keywords: /\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|new|this|typeof|instanceof|in|of|class|extends|super|static|import|export|default|from|as|async|await|yield|true|false|null|undefined)\b/g,
+                strings: /(["'`])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
+                numbers: /\b\d+\.?\d*\b/g,
+                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g
+            },
+            typescript: {
+                keywords: /\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|new|this|typeof|instanceof|in|of|class|extends|super|static|import|export|default|from|as|async|await|yield|true|false|null|undefined|interface|type|enum|namespace|declare|public|private|protected|readonly|abstract)\b/g,
+                strings: /(["'`])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
+                numbers: /\b\d+\.?\d*\b/g,
+                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g
+            },
+            python: {
+                keywords: /\b(def|class|if|elif|else|for|while|try|except|finally|with|as|import|from|return|yield|lambda|and|or|not|is|in|True|False|None|self|pass|break|continue|global|nonlocal|assert|del|raise)\b/g,
+                strings: /(["']{1,3})(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /#.*$/gm,
+                numbers: /\b\d+\.?\d*\b/g,
+                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g
+            },
+            java: {
+                keywords: /\b(public|private|protected|static|final|abstract|class|interface|extends|implements|package|import|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|throws|new|this|super|return|void|int|double|float|boolean|char|byte|short|long|String|true|false|null)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
+                numbers: /\b\d+\.?\d*[fFdDlL]?\b/g,
+                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g
+            },
+            css: {
+                keywords: /\b(color|background|font|margin|padding|border|width|height|display|position|top|left|right|bottom|z-index|opacity|transform|transition|animation|flex|grid|important)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(\/\*[\s\S]*?\*\/)/g,
+                numbers: /\b\d+\.?\d*(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax|fr)?\b/g,
+                selectors: /([.#]?[a-zA-Z_-][a-zA-Z0-9_-]*)\s*(?={)/g
+            },
+            html: {
+                keywords: /\b(html|head|body|div|span|p|a|img|ul|ol|li|h1|h2|h3|h4|h5|h6|table|tr|td|th|form|input|button|textarea|select|option|script|style|link|meta|title)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(<!--[\s\S]*?-->)/g,
+                attributes: /\b([a-zA-Z-]+)(?==)/g,
+                tags: /(<\/?[a-zA-Z][a-zA-Z0-9]*(?:\s[^>]*)?>)/g
+            },
+            json: {
+                keywords: /\b(true|false|null)\b/g,
+                strings: /(")(?:(?!\1)[^\\]|\\.)*\1/g,
+                numbers: /\b-?\d+\.?\d*\b/g
+            },
+            bash: {
+                keywords: /\b(if|then|else|elif|fi|for|while|do|done|case|esac|function|return|exit|export|source|alias|echo|cd|ls|pwd|mkdir|rm|cp|mv|grep|find|awk|sed|sort|uniq|head|tail|cat|less|more)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /#.*$/gm,
+                variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g
+            },
+            sh: {
+                keywords: /\b(if|then|else|elif|fi|for|while|do|done|case|esac|function|return|exit|export|source|alias|echo|cd|ls|pwd|mkdir|rm|cp|mv|grep|find|awk|sed|sort|uniq|head|tail|cat|less|more)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /#.*$/gm,
+                variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g
+            }
+        };
+
+        const patterns = languagePatterns[language] || languagePatterns.javascript;
+        let highlightedCode = code;
+
+        if (patterns.comments) {
+            highlightedCode = highlightedCode.replace(patterns.comments, '<span class="syntax-comment">$&</span>');
+        }
+        if (patterns.strings) {
+            highlightedCode = highlightedCode.replace(patterns.strings, '<span class="syntax-string">$&</span>');
+        }
+        if (patterns.keywords) {
+            highlightedCode = highlightedCode.replace(patterns.keywords, '<span class="syntax-keyword">$&</span>');
+        }
+        if (patterns.numbers) {
+            highlightedCode = highlightedCode.replace(patterns.numbers, '<span class="syntax-number">$&</span>');
+        }
+        if (patterns.functions) {
+            highlightedCode = highlightedCode.replace(patterns.functions, '<span class="syntax-function">$1</span>(');
+        }
+        if (patterns.selectors && language === 'css') {
+            highlightedCode = highlightedCode.replace(patterns.selectors, '<span class="syntax-selector">$1</span>{');
+        }
+        if (patterns.attributes && language === 'html') {
+            highlightedCode = highlightedCode.replace(patterns.attributes, '<span class="syntax-attribute">$1</span>=');
+        }
+        if (patterns.tags && language === 'html') {
+            highlightedCode = highlightedCode.replace(patterns.tags, '<span class="syntax-tag">$1</span>');
+        }
+        if (patterns.variables && (language === 'bash' || language === 'sh')) {
+            highlightedCode = highlightedCode.replace(patterns.variables, '<span class="syntax-variable">$&</span>');
+        }
+
+        return highlightedCode;
     }
 
     escapeHtml(text) {
