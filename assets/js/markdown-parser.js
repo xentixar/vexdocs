@@ -29,15 +29,10 @@ class MarkdownParser {
         html = html.replace(this.rules.codeBlock, (match, language, code) => {
             const lang = language || '';
             let cleanCode = code;
-            if (cleanCode.startsWith('\n')) {
-                cleanCode = cleanCode.substring(1);
-            }
-            if (cleanCode.endsWith('\n')) {
-                cleanCode = cleanCode.substring(0, cleanCode.length - 1);
-            }
+            cleanCode = cleanCode.replace(/^\s+/, '').replace(/\s+$/, '');
             
             const escapedCode = this.escapeHtml(cleanCode);
-            const highlightedCode = lang ? this.highlightCode(escapedCode, lang) : escapedCode;
+            const highlightedCode = lang ? this.highlightCode(cleanCode, lang) : escapedCode;
             const codeBlockHtml = `<div class="code-wrapper">
                 <button class="copy-button" onclick="copyToClipboard(this)" aria-label="Copy code">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -367,35 +362,109 @@ class MarkdownParser {
         const patterns = languagePatterns[language] || languagePatterns.javascript;
         let highlightedCode = code;
 
+        // Create a list of matches with their positions to avoid overlaps
+        const matches = [];
+
+        // Collect all matches with their positions
         if (patterns.comments) {
-            highlightedCode = highlightedCode.replace(patterns.comments, '<span class="syntax-comment">$&</span>');
-        }
-        if (patterns.strings) {
-            highlightedCode = highlightedCode.replace(patterns.strings, '<span class="syntax-string">$&</span>');
-        }
-        if (patterns.keywords) {
-            highlightedCode = highlightedCode.replace(patterns.keywords, '<span class="syntax-keyword">$&</span>');
-        }
-        if (patterns.numbers) {
-            highlightedCode = highlightedCode.replace(patterns.numbers, '<span class="syntax-number">$&</span>');
-        }
-        if (patterns.functions) {
-            highlightedCode = highlightedCode.replace(patterns.functions, '<span class="syntax-function">$1</span>(');
-        }
-        if (patterns.selectors && language === 'css') {
-            highlightedCode = highlightedCode.replace(patterns.selectors, '<span class="syntax-selector">$1</span>{');
-        }
-        if (patterns.attributes && language === 'html') {
-            highlightedCode = highlightedCode.replace(patterns.attributes, '<span class="syntax-attribute">$1</span>=');
-        }
-        if (patterns.tags && language === 'html') {
-            highlightedCode = highlightedCode.replace(patterns.tags, '<span class="syntax-tag">$1</span>');
-        }
-        if (patterns.variables && (language === 'bash' || language === 'sh')) {
-            highlightedCode = highlightedCode.replace(patterns.variables, '<span class="syntax-variable">$&</span>');
+            let match;
+            const regex = new RegExp(patterns.comments.source, patterns.comments.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'comment',
+                    priority: 1 // Highest priority
+                });
+            }
         }
 
-        return highlightedCode;
+        if (patterns.strings) {
+            let match;
+            const regex = new RegExp(patterns.strings.source, patterns.strings.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'string',
+                    priority: 2
+                });
+            }
+        }
+
+        if (patterns.keywords) {
+            let match;
+            const regex = new RegExp(patterns.keywords.source, patterns.keywords.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'keyword',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.numbers) {
+            let match;
+            const regex = new RegExp(patterns.numbers.source, patterns.numbers.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'number',
+                    priority: 3
+                });
+            }
+        }
+
+        // Sort by position and priority (higher priority first for same position)
+        matches.sort((a, b) => {
+            if (a.start !== b.start) return a.start - b.start;
+            return a.priority - b.priority;
+        });
+
+        // Remove overlapping matches (keep higher priority ones)
+        const filteredMatches = [];
+        for (const match of matches) {
+            const hasOverlap = filteredMatches.some(existing => 
+                (match.start < existing.end && match.end > existing.start)
+            );
+            if (!hasOverlap) {
+                filteredMatches.push(match);
+            }
+        }
+
+        // Apply highlighting from end to beginning to preserve positions
+        filteredMatches.reverse();
+        for (const match of filteredMatches) {
+            const before = highlightedCode.substring(0, match.start);
+            const after = highlightedCode.substring(match.end);
+            const escapedMatchText = this.escapeHtml(match.text);
+            const highlighted = `<span class="syntax-${match.type}">${escapedMatchText}</span>`;
+            highlightedCode = before + highlighted + after;
+        }
+
+        // Escape any remaining unmatched text
+        return this.escapeHighlightedCode(highlightedCode);
+    }
+
+    escapeHighlightedCode(code) {
+        // Split by spans to avoid escaping HTML inside them
+        const parts = code.split(/(<span class="syntax-[^"]*">[^<]*<\/span>)/);
+        
+        for (let i = 0; i < parts.length; i++) {
+            // Only escape parts that are not span elements
+            if (!parts[i].startsWith('<span class="syntax-')) {
+                parts[i] = this.escapeHtml(parts[i]);
+            }
+        }
+        
+        return parts.join('');
     }
 
     escapeHtml(text) {

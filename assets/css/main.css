@@ -318,7 +318,6 @@ body {
     padding: 48px 40px;
     background: var(--bg-primary);
     border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-sm);
     min-height: calc(100vh - var(--header-height) - 40px);
     position: relative;
     overflow-x: hidden;
@@ -605,6 +604,8 @@ body {
     min-width: 0;
     max-width: none;
     font-family: var(--font-family-mono) !important;
+    margin: 0 !important;
+    line-height: inherit;
 }
 
 .markdown-content blockquote {
