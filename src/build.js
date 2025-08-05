@@ -337,21 +337,38 @@ class StaticSiteBuilder {
         const pages = this.extractPages(navigation);
         
         pages.forEach(page => {
-            const pagePath = `${version}/${page.path.replace('.md', '')}`;
+            // Remove .md extension and create proper path
+            let pagePath = page.path.replace(/\.md$/, '');
+            
+            // Special handling for README files - they should be at the directory root
+            if (path.basename(pagePath) === 'README') {
+                pagePath = path.dirname(pagePath);
+                if (pagePath === '.') {
+                    pagePath = version; // Root README goes to version root
+                } else {
+                    pagePath = path.join(version, path.dirname(pagePath));
+                }
+            } else {
+                pagePath = path.join(version, pagePath);
+            }
+            
             const outputPath = path.join(this.outputDir, pagePath);
             
             // Create directory structure
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs.mkdirSync(outputPath, { recursive: true });
             
             // Generate HTML
             const html = this.generateHTML();
             fs.writeFileSync(path.join(outputPath, 'index.html'), html);
         });
         
-        // Generate version root page
         const versionPath = path.join(this.outputDir, version);
         fs.mkdirSync(versionPath, { recursive: true });
-        fs.writeFileSync(path.join(versionPath, 'index.html'), this.generateHTML());
+        
+        const versionIndexPath = path.join(versionPath, 'index.html');
+        if (!fs.existsSync(versionIndexPath)) {
+            fs.writeFileSync(versionIndexPath, this.generateHTML());
+        }
     }
 
     extractPages(navigation) {
@@ -413,9 +430,9 @@ class StaticSiteBuilder {
         
         <header class="header">
             <div class="header-content">
-                <h1 class="header-title">
+                <div class="header-title">
                     <a href="/" class="header-link">${this.config.title}</a>
-                </h1>
+                </div>
                 <div class="version-selector">
                     <select id="versionSelect" aria-label="Select documentation version">
                         <!-- Versions will be populated by JavaScript -->
