@@ -115,18 +115,8 @@ Configure Vexdocs by creating a `docs/config.json` file. Here's a complete examp
   "defaultVersion": "v2.1",
   "theme": {
     "primaryColor": "#2563eb",
-    "secondaryColor": "#64748b",
-    "sidebarWidth": "320px",
-    "maxWidth": "1200px",
-    "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+    "sidebarWidth": "320px"
   },
-  "navigation": {
-    "expandableGroups": true
-  },
-  "seo": {
-    "siteName": "Your Project Docs",
-    "ogImage": "/assets/og-image.png"
-  }
 }
 ```
 
@@ -140,8 +130,6 @@ Configure Vexdocs by creating a `docs/config.json` file. Here's a complete examp
 | `defaultVersion` | Version to show by default | First version |
 | `theme.primaryColor` | Primary brand color | "#007acc" |
 | `theme.sidebarWidth` | Sidebar width | "300px" |
-| `navigation.expandableGroups` | Collapsible navigation groups | `true` |
-| `seo.siteName` | Open Graph site name | `title` value |
 
 ## 📝 Markdown Support
 
