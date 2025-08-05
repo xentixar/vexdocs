@@ -324,7 +324,7 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-**Made with ❤️ by the Vexdocs team**
+**Made with ❤️ by the Xentixar**
 
 [Documentation](docs/) • [GitHub](https://github.com/xentixar/vexdocs)
 
