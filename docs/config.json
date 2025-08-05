@@ -1,0 +1,13 @@
+{
+  "title": "Vexdocs",
+  "description": "A modern documentation tool with multi-version support and markdown rendering",
+  "versions": {
+    "v2.0": "Latest",
+    "v1.0": "Stable"
+  },
+  "defaultVersion": "v2.0",
+  "theme": {
+    "primaryColor": "#007acc",
+    "sidebarWidth": "300px"
+  }
+}

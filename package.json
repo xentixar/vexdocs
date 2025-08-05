@@ -1,0 +1,20 @@
+{
+  "name": "vexdocs",
+  "version": "1.0.0",
+  "description": "A modern documentation tool with multi-version support and markdown rendering",
+  "main": "src/server.js",
+  "bin": {
+    "vexdocs": "./vexdocs"
+  },
+  "scripts": {
+    "start": "./vexdocs serve",
+    "dev": "./vexdocs dev",
+    "build": "./vexdocs build",
+    "serve": "./vexdocs serve"
+  },
+  "keywords": ["docs", "documentation", "markdown", "versioning", "vexdocs", "static-site"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

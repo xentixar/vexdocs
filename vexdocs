@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+
+/**
+ * Vexdocs CLI
+ * Modern documentation tool with multi-version support
+ */
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+const commands = {
+  serve: {
+    description: 'Start the development server',
+    action: () => {
+      console.log('🚀 Starting Vexdocs server...');
+      const server = spawn('node', [path.join(__dirname, 'src/server.js')], {
+        stdio: 'inherit',
+        cwd: __dirname
+      });
+      
+      server.on('error', (err) => {
+        console.error('❌ Failed to start server:', err.message);
+        process.exit(1);
+      });
+    }
+  },
+  
+  build: {
+    description: 'Build static documentation site',
+    action: () => {
+      console.log('🏗️  Building static site...');
+      const builder = spawn('node', [path.join(__dirname, 'src/build.js')], {
+        stdio: 'inherit',
+        cwd: __dirname
+      });
+      
+      builder.on('error', (err) => {
+        console.error('❌ Build failed:', err.message);
+        process.exit(1);
+      });
+    }
+  },
+  
+  dev: {
+    description: 'Start development server with enhanced logging',
+    action: () => {
+      console.log('🔧 Starting Vexdocs in development mode...');
+      const server = spawn('node', [path.join(__dirname, 'src/server.js'), '--dev'], {
+        stdio: 'inherit',
+        cwd: __dirname
+      });
+      
+      server.on('error', (err) => {
+        console.error('❌ Failed to start dev server:', err.message);
+        process.exit(1);
+      });
+    }
+  },
+
+  help: {
+    description: 'Show this help message',
+    action: showHelp
+  }
+};
+
+function showHelp() {
+  console.log(`
+📚 Vexdocs - Modern Documentation Tool
+
+Usage: vexdocs <command>
+
+Commands:
+  serve     Start the development server
+  build     Build static documentation site  
+  dev       Start development server with enhanced logging
+  help      Show this help message
+
+Examples:
+  vexdocs serve       # Start server on http://localhost:3000
+  vexdocs build       # Generate static site in dist/
+  vexdocs dev         # Development mode with hot reload
+
+Visit: http://localhost:3000 after running 'serve' or 'dev'
+  `);
+}
+
+function showVersion() {
+  const pkg = require('./package.json');
+  console.log(`Vexdocs v${pkg.version}`);
+}
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const command = args[0];
+
+if (!command || command === 'help' || command === '-h' || command === '--help') {
+  showHelp();
+  process.exit(0);
+}
+
+if (command === 'version' || command === '-v' || command === '--version') {
+  showVersion();
+  process.exit(0);
+}
+
+if (commands[command]) {
+  commands[command].action();
+} else {
+  console.error(`❌ Unknown command: ${command}`);
+  console.log('Run "vexdocs help" for available commands');
+  process.exit(1);
+}
