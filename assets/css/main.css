@@ -491,6 +491,46 @@ body {
     border: 1px solid #e9ecef;
 }
 
+.copy-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #6c757d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    z-index: 10;
+    opacity: 0.8;
+    font-family: var(--font-family);
+}
+
+.copy-button:hover {
+    background: #f8f9fa;
+    border-color: #6c757d;
+    opacity: 1;
+}
+
+.copy-button:active {
+    transform: translateY(1px);
+}
+
+.copy-button svg {
+    width: 14px;
+    height: 14px;
+}
+
+.copy-button .copy-success {
+    color: #28a745;
+    font-weight: 500;
+}
+
 .markdown-content pre code {
     background: none !important;
     padding: 0 !important;
@@ -763,13 +803,11 @@ body {
         top: 15px;
         left: 16px;
         z-index: 1001;
-        background: var(--primary-color);
-        color: white;
+        color: black;
         border: none;
-        border-radius: var(--border-radius-md);
+        background: none;
         padding: 8px;
         cursor: pointer;
-        box-shadow: var(--shadow-md);
         transition: var(--transition);
         width: 40px;
         height: 40px;
@@ -779,7 +817,6 @@ body {
     }
 
     .mobile-menu-toggle:hover {
-        background: var(--primary-hover);
         transform: scale(1.05);
     }
 
@@ -1007,6 +1044,18 @@ body {
         font-size: 13px;
         margin: 16px -4px;
         border-radius: var(--border-radius-md);
+    }
+
+    .copy-button {
+        top: 8px;
+        right: 8px;
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+
+    .copy-button svg {
+        width: 12px;
+        height: 12px;
     }
 
     .markdown-content table {

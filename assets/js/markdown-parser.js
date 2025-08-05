@@ -37,7 +37,17 @@ class MarkdownParser {
             }
             
             const escapedCode = this.escapeHtml(cleanCode);
-            const codeBlockHtml = `<div class="code-wrapper"><pre><code class="language-${lang}">${escapedCode}</code></pre></div>`;
+            const codeBlockHtml = `<div class="code-wrapper">
+                <button class="copy-button" onclick="copyToClipboard(this)" aria-label="Copy code">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span class="copy-text">Copy</span>
+                    <span class="copy-success" style="display: none;">Copied!</span>
+                </button>
+                <pre><code class="language-${lang}">${escapedCode}</code></pre>
+            </div>`;
             const placeholder = `<!--CODEBLOCK${codeBlocks.length}-->`;
             codeBlocks.push(codeBlockHtml);
             return placeholder;

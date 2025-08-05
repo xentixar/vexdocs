@@ -501,6 +501,44 @@ class DocsApp {
     }
 }
 
+function copyToClipboard(button) {
+    const codeWrapper = button.closest('.code-wrapper');
+    const codeElement = codeWrapper.querySelector('code');
+    const text = codeElement.textContent;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        const copyText = button.querySelector('.copy-text');
+        const copySuccess = button.querySelector('.copy-success');
+        
+        copyText.style.display = 'none';
+        copySuccess.style.display = 'inline';
+        
+        setTimeout(() => {
+            copyText.style.display = 'inline';
+            copySuccess.style.display = 'none';
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        const copyText = button.querySelector('.copy-text');
+        const copySuccess = button.querySelector('.copy-success');
+        
+        copyText.style.display = 'none';
+        copySuccess.style.display = 'inline';
+        
+        setTimeout(() => {
+            copyText.style.display = 'inline';
+            copySuccess.style.display = 'none';
+        }, 2000);
+    });
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new DocsApp();
