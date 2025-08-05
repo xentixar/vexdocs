@@ -58,6 +58,38 @@ class DocsApp {
         return 'README.md';
     }
 
+    formatTitle(filename) {
+        // Remove .md extension
+        let title = filename.replace(/\.md$/, '');
+        
+        // Convert kebab-case and snake_case to title case
+        title = title
+            .replace(/[-_]/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+        
+        // Handle special cases
+        const specialCases = {
+            'Api': 'API',
+            'Cli': 'CLI',
+            'Http': 'HTTP',
+            'Json': 'JSON',
+            'Xml': 'XML',
+            'Sql': 'SQL',
+            'Html': 'HTML',
+            'Css': 'CSS',
+            'Js': 'JS',
+            'Ts': 'TS',
+            'Readme': 'README'
+        };
+        
+        Object.entries(specialCases).forEach(([key, value]) => {
+            const regex = new RegExp(`\\b${key}\\b`, 'gi');
+            title = title.replace(regex, value);
+        });
+        
+        return title;
+    }
+
     applyTheme() {
         if (this.config.theme) {
             const root = document.documentElement;
@@ -123,26 +155,29 @@ class DocsApp {
         
         items.forEach(item => {
             if (item.type === 'folder') {
+                const folderTitle = this.formatTitle(item.title || item.name);
                 html += `
                     <li class="nav-folder ${level === 0 ? 'expanded' : ''}">
                         <div class="folder-header">
                             <button class="folder-toggle">
-                                <span class="folder-icon">📁</span>
-                                ${item.name}
+                                ${folderTitle}
                             </button>
                         </div>
                         <div class="folder-content">
-                            ${this.buildNavigationHTML(item.children, level + 1)}
+                            <div class="nav-list-wrapper">
+                                ${this.buildNavigationHTML(item.children, level + 1)}
+                            </div>
                         </div>
                     </li>
                 `;
             } else {
                 const isActive = item.path === this.currentPath;
+                const linkTitle = this.formatTitle(item.title || item.name);
+                const linkClass = level === 0 ? 'nav-link nav-link-top' : 'nav-link';
                 html += `
                     <li class="nav-item">
-                        <a href="#" class="nav-link ${isActive ? 'active' : ''}" data-path="${item.path}">
-                            <span class="file-icon">📄</span>
-                            ${item.name}
+                        <a href="#" class="${linkClass} ${isActive ? 'active' : ''}" data-path="${item.path}">
+                            ${linkTitle}
                         </a>
                     </li>
                 `;

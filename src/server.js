@@ -159,9 +159,11 @@ class DocsServer {
                         children: this.buildDirectoryTree(fullPath, version, itemRelativePath)
                     });
                 } else if (entry.name.endsWith('.md')) {
+                    const title = this.extractTitleFromMarkdown(fullPath);
                     items.push({
                         type: 'file',
                         name: entry.name.replace('.md', ''),
+                        title: title,
                         path: itemRelativePath
                     });
                 }
@@ -171,6 +173,33 @@ class DocsServer {
         }
         
         return items;
+    }
+
+    extractTitleFromMarkdown(filePath) {
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            
+            // Check for frontmatter title
+            const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+                if (titleMatch) {
+                    return titleMatch[1].trim().replace(/^["']|["']$/g, '');
+                }
+            }
+            
+            // Check for first H1 heading
+            const h1Match = content.match(/^#\s+(.+)$/m);
+            if (h1Match) {
+                return h1Match[1].trim();
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error extracting title from markdown:', error);
+            return null;
+        }
     }
 
     getMarkdownContent(version, filePath) {
