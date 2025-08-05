@@ -4,7 +4,7 @@
   "description": "A modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering. Create beautiful documentation websites without any external dependencies.",
   "main": "src/server.js",
   "bin": {
-    "vexdocs": "./vexdocs"
+    "vexdocs": "vexdocs"
   },
   "scripts": {
     "start": "./vexdocs serve",
@@ -26,11 +26,11 @@
     "search",
     "no-dependencies"
   ],
-  "author": "Vexdocs Team",
+  "author": "Xentixar",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xentixar/vexdocs.git"
+    "url": "git+https://github.com/xentixar/vexdocs.git"
   },
   "bugs": {
     "url": "https://github.com/xentixar/vexdocs/issues"
