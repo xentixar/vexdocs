@@ -386,7 +386,7 @@ class DocsServer {
     <meta id="ogUrl" property="og:url" content="">
     <meta id="ogTitle" property="og:title" content="${this.config.title}">
     <meta id="ogDescription" property="og:description" content="${this.config.description}">
-    <meta id="ogImage" property="og:image" content="">
+        <meta id="ogImage" property="og:image" content="/assets/images/logo-circle.svg">
     <meta property="og:site_name" content="${this.config.title}">
     
     <!-- Twitter -->
@@ -394,13 +394,21 @@ class DocsServer {
     <meta id="twitterUrl" property="twitter:url" content="">
     <meta id="twitterTitle" property="twitter:title" content="${this.config.title}">
     <meta id="twitterDescription" property="twitter:description" content="${this.config.description}">
-    <meta id="twitterImage" property="twitter:image" content="">
+    <meta id="twitterImage" property="twitter:image" content="/assets/images/logo-circle.svg">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <meta name="theme-color" content="#2563eb">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
     <div id="app">
@@ -415,7 +423,10 @@ class DocsServer {
         <header class="header">
             <div class="header-content">
                 <div class="header-title">
-                    <a href="/" class="header-link">${this.config.title}</a>
+                    <a href="/" class="header-link">
+                        <img src="/assets/images/logo-circle.svg" alt="VexDocs" class="header-logo" width="40" height="40">
+                        <span class="header-text">${this.config.title}</span>
+                    </a>
                 </div>
                 <div class="version-selector">
                     <select id="versionSelect" aria-label="Select documentation version">

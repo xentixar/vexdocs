@@ -88,10 +88,43 @@ body {
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+}
+
+.header-link {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-link:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.header-logo {
+    height: 40px;
+    width: 40px;
+    transition: var(--transition);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-logo:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.header-text {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    font-weight: 700;
 }
 
 .version-selector {
