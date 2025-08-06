@@ -244,6 +244,7 @@ class DocsApp {
         
         if (updateUrl) {
             this.updateUrl();
+            this.updateCanonicalUrl();
         }
     }
 
@@ -252,6 +253,12 @@ class DocsApp {
         const newPath = `/${this.currentVersion}${basePath ? '/' + basePath : ''}`;
         
         history.pushState(null, '', newPath);
+    }
+
+    updateCanonicalUrl() {
+        this.updateMetaTag('pageCanonical', 'rel', window.location.href, 'href');
+        this.updateMetaTag('ogUrl', 'property', window.location.href, 'content');
+        this.updateMetaTag('twitterUrl', 'property', window.location.href, 'content');
     }
 
     async loadInitialContent() {
@@ -302,11 +309,9 @@ class DocsApp {
             this.updateMetaTag('pageKeywords', 'name', seo.keywords, 'content');
             this.updateMetaTag('pageAuthor', 'name', seo.author, 'content');
             
-            // Update canonical URL
+            // Update canonical URL (only if not provided in frontmatter)
             if (seo.canonical) {
                 this.updateMetaTag('pageCanonical', 'rel', seo.canonical, 'href');
-            } else {
-                this.updateMetaTag('pageCanonical', 'rel', window.location.href, 'href');
             }
             
             // Update Open Graph tags
