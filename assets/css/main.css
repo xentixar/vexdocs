@@ -180,15 +180,20 @@ body {
     top: var(--header-height);
     left: 0;
     bottom: 0;
-    overflow-y: auto;
     z-index: 100;
     box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
 }
 
 .search-box {
     padding: 24px 20px;
     border-bottom: 1px solid var(--border-light);
     background: rgba(0, 0, 0, 0.02);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .search-box input {
@@ -218,6 +223,9 @@ body {
 /* Navigation */
 .navigation {
     padding: 16px 0;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .nav-list {
@@ -918,6 +926,8 @@ body {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         width: 280px;
         box-shadow: var(--shadow-xl);
+        display: flex;
+        flex-direction: column;
     }
 
     .sidebar.open {
@@ -1059,6 +1069,10 @@ body {
 
     .search-box {
         padding: 16px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 
     .nav-link {
