@@ -177,7 +177,7 @@ Vexdocs includes a powerful, custom-built markdown parser with extensive feature
 ### Core Features
 - **Headers (H1-H6)** with auto-generated anchor links and IDs
 - **Text formatting**: **Bold**, *italic*, ~~strikethrough~~, `inline code`
-- **Code blocks** with syntax highlighting (JavaScript, Python, JSON, HTML, CSS, and more)
+- **Code blocks** with syntax highlighting (PHP, JavaScript, TypeScript, Python, Java, HTML, CSS, JSON, Bash, and more)
 - **Lists**: Ordered, unordered, and nested lists with proper indentation
 - **Links and images** with automatic optimization and lazy loading
 - **Tables** with professional styling and responsive design
@@ -190,7 +190,7 @@ Vexdocs includes a powerful, custom-built markdown parser with extensive feature
 - **Image optimization**: Automatic alt text and responsive sizing
 - **Table of contents**: Auto-generated from headers
 - **Cross-references**: Link between documents and versions
-- **Code syntax highlighting**: 5+ programming languages supported
+- **Code syntax highlighting**: 10+ programming languages supported including PHP, TypeScript, and enhanced patterns
 - **Custom containers**: Warning, info, tip, and danger callouts
 
 ## Features List

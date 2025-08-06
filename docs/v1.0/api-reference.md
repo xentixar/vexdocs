@@ -168,10 +168,13 @@ const server = new vexdocs.Server({
 ````
 
 **Supported languages for syntax highlighting:**
-- JavaScript, TypeScript, Python, Java
-- HTML, CSS, JSON, YAML, XML
-- Bash, Shell, PowerShell
-- And 40+ more languages
+- **PHP** (new in v1.0) - Full PHP syntax with variables, functions, and modern features
+- **JavaScript & TypeScript** - Enhanced with template literals, types, and decorators
+- **Python** - Complete Python syntax with decorators and type hints
+- **Java** - Full Java syntax with annotations and generics
+- **HTML & CSS** - Comprehensive HTML5 and CSS3 support
+- **JSON, YAML, XML** - Data format highlighting
+- **Bash/Shell** - Shell scripting with operators and variables
 
 ## 🎨 Theming API
 

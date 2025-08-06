@@ -630,6 +630,50 @@ body {
     font-weight: 500;
 }
 
+.syntax-template-literal {
+    color: #e36209;
+    font-weight: 500;
+}
+
+.syntax-type {
+    color: #6f42c1;
+    font-weight: 600;
+}
+
+.syntax-decorator {
+    color: #d73a49;
+    font-weight: 500;
+}
+
+.syntax-annotation {
+    color: #d73a49;
+    font-weight: 500;
+}
+
+.syntax-pseudo-class {
+    color: #e36209;
+    font-weight: 500;
+}
+
+.syntax-pseudo-element {
+    color: #e36209;
+    font-weight: 500;
+}
+
+.syntax-doctype {
+    color: #6a737d;
+    font-weight: 500;
+}
+
+.syntax-punctuation {
+    color: #586069;
+}
+
+.syntax-operator {
+    color: #586069;
+    font-weight: 500;
+}
+
 .markdown-content pre code {
     background: none !important;
     padding: 0 !important;

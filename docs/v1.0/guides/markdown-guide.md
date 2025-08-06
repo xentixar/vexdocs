@@ -240,6 +240,31 @@ npm start
 ./vexdocs serve --port 3000
 ```
 
+```php
+<?php
+// PHP example with syntax highlighting
+class UserService {
+    private $database;
+    
+    public function __construct(Database $database) {
+        $this->database = $database;
+    }
+    
+    public function createUser(array $userData): User {
+        $user = new User();
+        $user->setName($userData['name']);
+        $user->setEmail($userData['email']);
+        
+        return $this->database->save($user);
+    }
+    
+    public function getUserById(int $id): ?User {
+        return $this->database->findById($id);
+    }
+}
+?>
+```
+
 ```json
 {
   "title": "Configuration Example",
@@ -254,7 +279,7 @@ npm start
 Vexdocs v1.0 supports syntax highlighting for 50+ languages:
 
 **Popular Languages:**
-- `javascript`, `typescript`, `python`, `java`, `csharp`
+- `php` (new in v1.0), `javascript`, `typescript`, `python`, `java`, `csharp`
 - `html`, `css`, `scss`, `less`
 - `json`, `yaml`, `xml`, `toml`
 - `bash`, `shell`, `powershell`, `batch`

@@ -351,62 +351,81 @@ class MarkdownParser {
     highlightCode(code, language) {
         const languagePatterns = {
             javascript: {
-                keywords: /\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|new|this|typeof|instanceof|in|of|class|extends|super|static|import|export|default|from|as|async|await|yield|true|false|null|undefined)\b/g,
+                keywords: /\b(abstract|arguments|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|eval|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|true|try|typeof|var|void|volatile|while|with|yield)\b/g,
                 strings: /(["'`])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
                 numbers: /\b\d+\.?\d*\b/g,
-                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g
+                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g,
+                templateLiterals: /\$\{[^}]+\}/g
             },
             typescript: {
-                keywords: /\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|new|this|typeof|instanceof|in|of|class|extends|super|static|import|export|default|from|as|async|await|yield|true|false|null|undefined|interface|type|enum|namespace|declare|public|private|protected|readonly|abstract)\b/g,
+                keywords: /\b(abstract|any|as|async|await|boolean|break|case|catch|class|const|constructor|continue|declare|default|delete|do|else|enum|export|extends|false|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|module|namespace|new|null|of|package|private|protected|public|readonly|return|set|static|string|super|switch|this|throw|true|try|type|typeof|undefined|var|void|while|with|yield)\b/g,
                 strings: /(["'`])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
                 numbers: /\b\d+\.?\d*\b/g,
-                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g
+                functions: /\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*(?=\()/g,
+                templateLiterals: /\$\{[^}]+\}/g,
+                types: /\b([A-Z][a-zA-Z0-9_]*)\b/g
             },
             python: {
-                keywords: /\b(def|class|if|elif|else|for|while|try|except|finally|with|as|import|from|return|yield|lambda|and|or|not|is|in|True|False|None|self|pass|break|continue|global|nonlocal|assert|del|raise)\b/g,
+                keywords: /\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|None|or|pass|raise|return|True|try|while|with|yield)\b/g,
                 strings: /(["']{1,3})(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /#.*$/gm,
                 numbers: /\b\d+\.?\d*\b/g,
-                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g
+                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g,
+                decorators: /@[a-zA-Z_][a-zA-Z0-9_]*/g
             },
             java: {
-                keywords: /\b(public|private|protected|static|final|abstract|class|interface|extends|implements|package|import|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|throws|new|this|super|return|void|int|double|float|boolean|char|byte|short|long|String|true|false|null)\b/g,
+                keywords: /\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|false|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|void|volatile|while)\b/g,
                 strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
                 numbers: /\b\d+\.?\d*[fFdDlL]?\b/g,
-                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g
+                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g,
+                annotations: /@[a-zA-Z_][a-zA-Z0-9_]*/g
             },
             css: {
-                keywords: /\b(color|background|font|margin|padding|border|width|height|display|position|top|left|right|bottom|z-index|opacity|transform|transition|animation|flex|grid|important)\b/g,
+                keywords: /\b(align-content|align-items|align-self|all|animation|animation-delay|animation-direction|animation-duration|animation-fill-mode|animation-iteration-count|animation-name|animation-play-state|animation-timing-function|backface-visibility|background|background-attachment|background-clip|background-color|background-image|background-origin|background-position|background-repeat|background-size|border|border-bottom|border-bottom-color|border-bottom-left-radius|border-bottom-right-radius|border-bottom-style|border-bottom-width|border-collapse|border-color|border-image|border-image-outset|border-image-repeat|border-image-slice|border-image-source|border-image-width|border-left|border-left-color|border-left-style|border-left-width|border-radius|border-right|border-right-color|border-right-style|border-right-width|border-spacing|border-style|border-top|border-top-color|border-top-left-radius|border-top-right-radius|border-top-style|border-top-width|border-width|bottom|box-decoration-break|box-shadow|box-sizing|break-after|break-before|break-inside|caption-side|clear|clip|color|column-count|column-fill|column-gap|column-rule|column-rule-color|column-rule-style|column-rule-width|column-span|column-width|columns|content|counter-increment|counter-reset|cursor|direction|display|empty-cells|filter|flex|flex-basis|flex-direction|flex-flow|flex-grow|flex-shrink|flex-wrap|float|font|font-family|font-feature-settings|font-kerning|font-language-override|font-size|font-size-adjust|font-stretch|font-style|font-synthesis|font-variant|font-variant-alternates|font-variant-caps|font-variant-east-asian|font-variant-ligatures|font-variant-numeric|font-variant-position|font-weight|grid|grid-area|grid-auto-columns|grid-auto-flow|grid-auto-rows|grid-column|grid-column-end|grid-column-gap|grid-column-start|grid-gap|grid-row|grid-row-end|grid-row-gap|grid-row-start|grid-template|grid-template-areas|grid-template-columns|grid-template-rows|hanging-punctuation|height|hyphens|image-orientation|image-rendering|image-resolution|ime-mode|justify-content|left|letter-spacing|line-height|list-style|list-style-image|list-style-position|list-style-type|margin|margin-bottom|margin-left|margin-right|margin-top|max-height|max-width|min-height|min-width|mix-blend-mode|object-fit|object-position|opacity|order|orphans|outline|outline-color|outline-offset|outline-style|outline-width|overflow|overflow-wrap|overflow-x|overflow-y|padding|padding-bottom|padding-left|padding-right|padding-top|page-break-after|page-break-before|page-break-inside|perspective|perspective-origin|position|quotes|resize|right|tab-size|table-layout|text-align|text-align-last|text-combine-upright|text-decoration|text-decoration-color|text-decoration-line|text-decoration-style|text-indent|text-justify|text-orientation|text-overflow|text-shadow|text-transform|text-underline-position|top|transform|transform-origin|transform-style|transition|transition-delay|transition-duration|transition-property|transition-timing-function|unicode-bidi|vertical-align|visibility|white-space|width|word-break|word-spacing|word-wrap|writing-mode|z-index)\b/g,
                 strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /(\/\*[\s\S]*?\*\/)/g,
                 numbers: /\b\d+\.?\d*(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax|fr)?\b/g,
-                selectors: /([.#]?[a-zA-Z_-][a-zA-Z0-9_-]*)\s*(?={)/g
+                selectors: /([.#]?[a-zA-Z_-][a-zA-Z0-9_-]*)\s*(?={)/g,
+                pseudoClasses: /:[a-zA-Z_-][a-zA-Z0-9_-]*/g,
+                pseudoElements: /::[a-zA-Z_-][a-zA-Z0-9_-]*/g
             },
             html: {
-                keywords: /\b(html|head|body|div|span|p|a|img|ul|ol|li|h1|h2|h3|h4|h5|h6|table|tr|td|th|form|input|button|textarea|select|option|script|style|link|meta|title)\b/g,
+                keywords: /\b(a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|em|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hgroup|hr|html|i|iframe|img|input|ins|kbd|label|legend|li|link|main|map|mark|meta|meter|nav|noframes|noscript|object|ol|optgroup|option|output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|small|source|span|strike|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr)\b/g,
                 strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /(<!--[\s\S]*?-->)/g,
                 attributes: /\b([a-zA-Z-]+)(?==)/g,
-                tags: /(<\/?[a-zA-Z][a-zA-Z0-9]*(?:\s[^>]*)?>)/g
+                tags: /(<\/?[a-zA-Z][a-zA-Z0-9]*(?:\s[^>]*)?>)/g,
+                doctype: /<!DOCTYPE[^>]*>/gi
             },
             json: {
                 keywords: /\b(true|false|null)\b/g,
                 strings: /(")(?:(?!\1)[^\\]|\\.)*\1/g,
-                numbers: /\b-?\d+\.?\d*\b/g
+                numbers: /\b-?\d+\.?\d*\b/g,
+                punctuation: /[{}[\],:]/g
             },
             bash: {
-                keywords: /\b(if|then|else|elif|fi|for|while|do|done|case|esac|function|return|exit|export|source|alias|echo|cd|ls|pwd|mkdir|rm|cp|mv|grep|find|awk|sed|sort|uniq|head|tail|cat|less|more)\b/g,
+                keywords: /\b(alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|continue|declare|dirs|disown|echo|enable|eval|exec|exit|export|fc|fg|getopts|hash|help|history|if|jobs|kill|let|local|logout|mapfile|popd|printf|pushd|read|readarray|return|set|shift|shopt|source|suspend|test|then|times|trap|type|typeset|ulimit|umask|unalias|unset|until|wait|while|case|do|done|elif|else|esac|fi|for|function|in|select|until|while)\b/g,
                 strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /#.*$/gm,
-                variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g
+                variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g,
+                operators: /[&|;<>()]/g
             },
             sh: {
-                keywords: /\b(if|then|else|elif|fi|for|while|do|done|case|esac|function|return|exit|export|source|alias|echo|cd|ls|pwd|mkdir|rm|cp|mv|grep|find|awk|sed|sort|uniq|head|tail|cat|less|more)\b/g,
+                keywords: /\b(alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|continue|declare|dirs|disown|echo|enable|eval|exec|exit|export|fc|fg|getopts|hash|help|history|if|jobs|kill|let|local|logout|mapfile|popd|printf|pushd|read|readarray|return|set|shift|shopt|source|suspend|test|then|times|trap|type|typeset|ulimit|umask|unalias|unset|until|wait|while|case|do|done|elif|else|esac|fi|for|function|in|select|until|while)\b/g,
                 strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
                 comments: /#.*$/gm,
+                variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g,
+                operators: /[&|;<>()]/g
+            },
+            php: {
+                keywords: /\b(abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|finally|fn|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor|yield|yield from|__CLASS__|__DIR__|__FILE__|__FUNCTION__|__LINE__|__METHOD__|__NAMESPACE__|__TRAIT__|true|false|null)\b/g,
+                strings: /(["'])(?:(?!\1)[^\\]|\\.)*\1/g,
+                comments: /(\/\/.*$|\/\*[\s\S]*?\*\/|#.*$)/gm,
+                numbers: /\b\d+\.?\d*\b/g,
+                functions: /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g,
                 variables: /\$[a-zA-Z_][a-zA-Z0-9_]*/g
             }
         };
@@ -470,6 +489,203 @@ class MarkdownParser {
                     text: match[0],
                     type: 'number',
                     priority: 3
+                });
+            }
+        }
+
+        // Handle additional pattern types
+        if (patterns.functions) {
+            let match;
+            const regex = new RegExp(patterns.functions.source, patterns.functions.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'function',
+                    priority: 5
+                });
+            }
+        }
+
+        if (patterns.variables) {
+            let match;
+            const regex = new RegExp(patterns.variables.source, patterns.variables.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'variable',
+                    priority: 6
+                });
+            }
+        }
+
+        if (patterns.templateLiterals) {
+            let match;
+            const regex = new RegExp(patterns.templateLiterals.source, patterns.templateLiterals.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'template-literal',
+                    priority: 2
+                });
+            }
+        }
+
+        if (patterns.types) {
+            let match;
+            const regex = new RegExp(patterns.types.source, patterns.types.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'type',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.decorators) {
+            let match;
+            const regex = new RegExp(patterns.decorators.source, patterns.decorators.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'decorator',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.annotations) {
+            let match;
+            const regex = new RegExp(patterns.annotations.source, patterns.annotations.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'annotation',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.selectors) {
+            let match;
+            const regex = new RegExp(patterns.selectors.source, patterns.selectors.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'selector',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.pseudoClasses) {
+            let match;
+            const regex = new RegExp(patterns.pseudoClasses.source, patterns.pseudoClasses.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'pseudo-class',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.pseudoElements) {
+            let match;
+            const regex = new RegExp(patterns.pseudoElements.source, patterns.pseudoElements.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'pseudo-element',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.attributes) {
+            let match;
+            const regex = new RegExp(patterns.attributes.source, patterns.attributes.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'attribute',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.tags) {
+            let match;
+            const regex = new RegExp(patterns.tags.source, patterns.tags.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'tag',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.doctype) {
+            let match;
+            const regex = new RegExp(patterns.doctype.source, patterns.doctype.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'doctype',
+                    priority: 4
+                });
+            }
+        }
+
+        if (patterns.punctuation) {
+            let match;
+            const regex = new RegExp(patterns.punctuation.source, patterns.punctuation.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'punctuation',
+                    priority: 7
+                });
+            }
+        }
+
+        if (patterns.operators) {
+            let match;
+            const regex = new RegExp(patterns.operators.source, patterns.operators.flags);
+            while ((match = regex.exec(code)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    type: 'operator',
+                    priority: 7
                 });
             }
         }
