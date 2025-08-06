@@ -144,7 +144,52 @@ class DocsServer {
             return [];
         }
 
-        return this.buildDirectoryTree(versionDir, version);
+        const navigation = this.buildDirectoryTree(versionDir, version);
+        return this.applySidebarOrder(navigation, version);
+    }
+
+    applySidebarOrder(navigation, version, folderOrder = null) {
+        if (!this.config.sidebarOrder || !this.config.sidebarOrder[version]) {
+            return navigation;
+        }
+
+        const orderConfig = folderOrder || this.config.sidebarOrder[version];
+        const orderedNavigation = [];
+        const unorderedItems = [...navigation];
+
+        const readmeIndex = unorderedItems.findIndex(item => 
+            item.type === 'file' && (item.path === 'README.md' || item.name === 'README')
+        );
+        if (readmeIndex !== -1) {
+            orderedNavigation.push(unorderedItems[readmeIndex]);
+            unorderedItems.splice(readmeIndex, 1);
+        }
+
+        orderConfig.forEach(orderItem => {
+            if (typeof orderItem === 'string') {
+                const index = unorderedItems.findIndex(item => 
+                    (item.type === 'file' && item.path === orderItem) ||
+                    (item.type === 'folder' && item.name === orderItem)
+                );
+                if (index !== -1) {
+                    orderedNavigation.push(unorderedItems[index]);
+                    unorderedItems.splice(index, 1);
+                }
+            } else if (orderItem.folder && orderItem.items) {
+                const folderIndex = unorderedItems.findIndex(item => 
+                    item.type === 'folder' && item.name === orderItem.folder
+                );
+                if (folderIndex !== -1) {
+                    const folder = unorderedItems[folderIndex];
+                    folder.children = this.applySidebarOrder(folder.children, version, orderItem.items);
+                    orderedNavigation.push(folder);
+                    unorderedItems.splice(folderIndex, 1);
+                }
+            }
+        });
+
+        orderedNavigation.push(...unorderedItems);
+        return orderedNavigation;
     }
 
     buildDirectoryTree(dirPath, version, relativePath = '') {
@@ -461,6 +506,8 @@ class DocsServer {
 </body>
 </html>`;
     }
+
+
 
     start() {
         const server = http.createServer((req, res) => {

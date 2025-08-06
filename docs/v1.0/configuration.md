@@ -25,8 +25,23 @@ Vexdocs uses a single configuration file `docs/config.json` to control all aspec
   },
   "defaultVersion": "v1.0",
   "theme": {
-    "primaryColor": "#007acc",
-    "sidebarWidth": "300px"
+    "primaryColor": "#2563eb",
+    "sidebarWidth": "320px"
+  },
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md",
+      "configuration.md"
+    ]
   }
 }
 ```
@@ -62,6 +77,7 @@ Vexdocs uses a single configuration file `docs/config.json` to control all aspec
 |----------|------|---------|-------------|
 | `versions` | object | `{"v1.0": "Latest"}` | Available documentation versions |
 | `defaultVersion` | string | First version key | Default version to display |
+| `sidebarOrder` | object | `{}` | Custom ordering for sidebar items (version-specific) |
 
 **Version Configuration:**
 ```json
@@ -123,30 +139,136 @@ Vexdocs uses a single configuration file `docs/config.json` to control all aspec
 }
 ```
 
-## 🧭 Navigation
+## 🧭 Navigation & Sidebar Ordering
 
-Navigation is automatically generated from your file structure. Folders become expandable sections and `.md` files become navigation links.
+Navigation is automatically generated from your file structure, with powerful customization options for controlling the order of sidebar items.
 
-### Folder Structure Impact
+### Automatic Navigation
 
-```
-docs/v1.0/
-├── README.md              # Home (always visible)
-├── getting-started.md     # Getting Started
-├── guides/               # 📁 Guides (expandable)
-│   ├── installation.md   #   → Installation
-│   └── configuration.md  #   → Configuration
-└── api/                  # 📁 API (expandable)
-    └── reference.md      #   → Reference
-```
-
-### Navigation Behavior
-
+Navigation is generated from your folder structure:
 - **Folders** become expandable/collapsible sections
 - **Top-level folders** are expanded by default
 - **Nested folders** are collapsed by default
 - **File titles** are extracted from frontmatter `title:` or first H1 heading
 - **File names** are automatically formatted (kebab-case → Title Case)
+
+### 📋 Custom Sidebar Ordering
+
+Control the order of sidebar items by adding a `sidebarOrder` configuration to your `config.json`:
+
+```json
+{
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md",
+      "configuration.md"
+    ]
+  }
+}
+```
+
+#### Ordering Features
+
+- **README Always First**: README files are automatically placed at the top
+- **Custom File Order**: List files in your desired order
+- **Folder Content Ordering**: Control the order of files within folders
+- **Mixed Structure**: Combine files and folders in any order
+- **Fallback Behavior**: Items not in the order list appear at the end
+
+#### Ordering Rules
+
+1. **README Priority**: README files are always placed first, regardless of configuration
+2. **Custom Order**: Files and folders are ordered according to your configuration
+3. **Nested Ordering**: Files within folders can be ordered using the `items` array
+4. **Version-Specific**: Each version can have its own ordering configuration
+5. **Graceful Fallback**: Any items not specified in the order appear at the end
+
+#### Configuration Examples
+
+**Simple File Ordering:**
+```json
+{
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      "installation.md",
+      "configuration.md",
+      "api-reference.md"
+    ]
+  }
+}
+```
+
+**Folder with Ordered Contents:**
+```json
+{
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md"
+    ]
+  }
+}
+```
+
+**Mixed Structure:**
+```json
+{
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      "quick-start.md",
+      {
+        "folder": "tutorials",
+        "items": [
+          "basic-tutorial.md",
+          "advanced-tutorial.md"
+        ]
+      },
+      {
+        "folder": "api",
+        "items": [
+          "authentication.md",
+          "endpoints.md",
+          "examples.md"
+        ]
+      },
+      "troubleshooting.md"
+    ]
+  }
+}
+```
+
+### Folder Structure Impact
+
+```
+docs/v1.0/
+├── README.md              # Home (always first)
+├── getting-started.md     # Getting Started
+├── guides/               # 📁 Guides (expandable)
+│   ├── deployment.md     #   → Deployment (ordered)
+│   ├── markdown-guide.md #   → Markdown Guide (ordered)
+│   └── troubleshooting.md #   → Troubleshooting (ordered)
+└── api/                  # 📁 API (expandable)
+    └── reference.md      #   → Reference
+```
 
 ### Customization Tips
 
@@ -154,10 +276,11 @@ docs/v1.0/
 - Organize content logically (most important first)
 - Keep folder nesting to 2-3 levels maximum
 - Use README.md files as section overviews
+- Leverage sidebar ordering for better user experience
 
 ## 🔍 SEO & Meta Tags
 
-SEO settings are handled through individual page frontmatter, not global configuration.
+SEO settings are handled through individual page frontmatter in markdown files. Each page can have its own SEO configuration.
 
 ### Page-Level SEO with Frontmatter
 
@@ -169,6 +292,13 @@ title: "Custom Page Title"
 description: "Specific page description for search engines"
 keywords: "documentation, api, guide, tutorial"
 author: "Your Name"
+canonical: "https://docs.myproject.com/custom-page"
+og_title: "Custom Open Graph Title"
+og_description: "Custom Open Graph Description"
+og_image: "/assets/custom-og-image.png"
+twitter_title: "Custom Twitter Title"
+twitter_description: "Custom Twitter Description"
+twitter_image: "/assets/custom-twitter-image.png"
 ---
 
 # Page Content
@@ -180,25 +310,34 @@ author: "Your Name"
 - `keywords`: Comma-separated keywords
 - `author`: Content author
 - `canonical`: Canonical URL (if different)
+- `og_title`: Open Graph title
+- `og_description`: Open Graph description
+- `og_image`: Open Graph image URL
+- `twitter_title`: Twitter Card title
+- `twitter_description`: Twitter Card description
+- `twitter_image`: Twitter Card image URL
 
-### Social Media Optimization
+### Image Guidelines for Social Media
 
-**Open Graph Image Guidelines:**
-- **Size**: 1200x630 pixels (recommended)
+When using `og_image` and `twitter_image` in frontmatter:
+
+**Recommended Specifications:**
+- **Size**: 1200x630 pixels (Open Graph), 1200x600 pixels (Twitter)
 - **Format**: PNG or JPEG
 - **Content**: Include site/brand name and key visual
 - **Text**: Large, readable fonts
-- **Location**: Place in `/docs/assets/` or `/assets/`
+- **Location**: Place images in `/docs/assets/` or `/assets/`
 
-**Creating Effective OG Images:**
-```json
-{
-  "seo": {
-    "siteName": "MyProject Docs",
-    "ogImage": "/assets/og-image.png"
-  }
-}
+**Example:**
+```markdown
+---
+title: "API Reference"
+og_image: "/assets/api-reference-og.png"
+twitter_image: "/assets/api-reference-twitter.png"
+---
 ```
+
+
 
 ### Sitemap & Robots.txt Generation
 
@@ -252,33 +391,27 @@ Sitemap: https://your-domain.com/sitemap.xml
   "defaultVersion": "v1.0",
   "theme": {
     "primaryColor": "#2563eb",
-    "secondaryColor": "#64748b", 
-    "sidebarWidth": "320px",
-    "maxWidth": "1200px",
-    "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    "sidebarWidth": "320px"
   },
-  "navigation": {
-    "expandableGroups": true
-  },
-  "seo": {
-    "siteName": "MyProject Documentation",
-    "ogImage": "/assets/myproject-og.png"
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md",
+      "configuration.md"
+    ]
   }
 }
 ```
 
-### Environment-Specific Configuration
 
-**Development vs Production:**
-```json
-{
-  "title": "MyProject Docs (Dev)",
-  "description": "Development version of documentation",
-  "theme": {
-    "primaryColor": "#orange"
-  }
-}
-```
 
 ## 🔧 Configuration Validation
 
@@ -344,14 +477,12 @@ Vexdocs uses CSS custom properties that you can override:
 :root {
   /* Colors from config.json */
   --primary-color: #2563eb;
-  --secondary-color: #64748b;
   
   /* Layout from config.json */
   --sidebar-width: 320px;
-  --content-max-width: 1200px;
   
   /* Additional customizable properties */
-  --header-height: 60px;
+  --header-height: 70px;
   --border-radius: 6px;
   --box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -381,7 +512,7 @@ Vexdocs uses CSS custom properties that you can override:
 
 ### Mobile-First Design
 
-Vexdocs is mobile-first by default, but you can customize responsive behavior:
+Vexdocs is mobile-first by default, with responsive design built-in:
 
 ```css
 /* Tablet adjustments */
@@ -395,7 +526,6 @@ Vexdocs is mobile-first by default, but you can customize responsive behavior:
 @media (min-width: 1024px) {
   :root {
     --sidebar-width: 320px;
-    --content-max-width: 1400px;
   }
 }
 ```
@@ -457,8 +587,7 @@ export VEXDOCS_THEME_COLOR="#2563eb"
 {
   "theme": {
     "sidebarWidth": "320px",     // Standard width
-    "maxWidth": "1200px",        // Not too wide
-    "fontFamily": "system-ui"    // System fonts load faster
+    "primaryColor": "#2563eb"    // Brand color
   }
 }
 ```
@@ -466,8 +595,8 @@ export VEXDOCS_THEME_COLOR="#2563eb"
 ### Configuration Impact on Build
 
 - **Large images**: Optimize before adding to assets
-- **Complex themes**: May increase CSS size
 - **Many versions**: Affects build time
+- **Sidebar ordering**: Minimal impact on performance
 
 ## 🎯 Best Practices
 
@@ -478,7 +607,8 @@ export VEXDOCS_THEME_COLOR="#2563eb"
   "title": "My Documentation",
   "versions": {"v1.0": "Latest"},
   "theme": {
-    "primaryColor": "#your-brand-color"
+    "primaryColor": "#your-brand-color",
+    "sidebarWidth": "320px"
   }
 }
 ```
@@ -510,8 +640,9 @@ Keep a changelog of configuration updates:
 
 1. **Start with basic settings** (title, colors)
 2. **Add theme customization** gradually
-3. **Test each change** before proceeding
-4. **Get user feedback** on major changes
+3. **Configure sidebar ordering** for better UX
+4. **Test each change** before proceeding
+5. **Get user feedback** on major changes
 
 ---
 

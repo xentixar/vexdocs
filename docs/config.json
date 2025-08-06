@@ -9,5 +9,21 @@
   "theme": {
     "primaryColor": "#2563eb",
     "sidebarWidth": "320px"
+  },
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md",
+      "configuration.md",
+      "setup.md"
+    ]
   }
 }

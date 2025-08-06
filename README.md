@@ -96,6 +96,7 @@ your-project/
 
 - **Versions**: Each subdirectory in `docs/` represents a documentation version
 - **Automatic Navigation**: Sidebar is generated from your folder structure
+- **Custom Sidebar Ordering**: Control the order of sidebar items through `config.json`
 - **Markdown-First**: All content is written in standard Markdown
 - **Asset Management**: Images and files can be placed in any `assets/` folder
 
@@ -131,6 +132,43 @@ Configure Vexdocs by creating a `docs/config.json` file. Here's a complete examp
 | `defaultVersion` | Version to show by default | First version |
 | `theme.primaryColor` | Primary brand color | "#007acc" |
 | `theme.sidebarWidth` | Sidebar width | "300px" |
+
+### 📋 Sidebar Ordering
+
+Control the order of sidebar items by adding a `sidebarOrder` configuration to your `config.json`:
+
+```json
+{
+  "sidebarOrder": {
+    "v1.0": [
+      "getting-started.md",
+      {
+        "folder": "guides",
+        "items": [
+          "deployment.md",
+          "markdown-guide.md",
+          "troubleshooting.md"
+        ]
+      },
+      "api-reference.md",
+      "configuration.md"
+    ]
+  }
+}
+```
+
+**Features:**
+- **README always first**: The README file is automatically placed at the top
+- **Custom file order**: List files in your desired order
+- **Folder ordering**: Control the order of files within folders
+- **Mixed structure**: Combine files and folders in any order
+- **Fallback behavior**: Items not in the order list appear at the end
+
+**Ordering Rules:**
+1. README files are always placed first
+2. Files and folders are ordered according to your configuration
+3. Files within folders can be ordered using the `items` array
+4. Any items not specified in the order appear at the end
 
 ## 📝 Markdown Support
 
