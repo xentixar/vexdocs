@@ -232,17 +232,6 @@ class DocsServer {
         try {
             const content = fs.readFileSync(filePath, 'utf8');
             
-            // Check for frontmatter title
-            const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
-            if (frontmatterMatch) {
-                const frontmatter = frontmatterMatch[1];
-                const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
-                if (titleMatch) {
-                    return titleMatch[1].trim().replace(/^["']|["']$/g, '');
-                }
-            }
-            
-            // Check for first H1 heading
             const h1Match = content.match(/^#\s+(.+)$/m);
             if (h1Match) {
                 return h1Match[1].trim();

@@ -53,7 +53,10 @@ class DocsApp {
         const segments = path.split('/').filter(s => s);
         
         if (segments.length > 1) {
-            return segments.slice(1).join('/') + '.md';
+            const pathWithoutVersion = segments.slice(1).join('/');
+            // Remove .md extension from URL if present, then add it back for file lookup
+            const cleanPath = pathWithoutVersion.replace('.md', '');
+            return cleanPath + '.md';
         }
         return 'README.md';
     }
@@ -174,9 +177,11 @@ class DocsApp {
                 const isActive = item.path === this.currentPath;
                 const linkTitle = this.formatTitle(item.title || item.name);
                 const linkClass = level === 0 ? 'nav-link nav-link-top' : 'nav-link';
+                const pathWithoutMd = item.path.replace('.md', '');
+                const fullUrl = `${window.location.origin}/${this.currentVersion}/${pathWithoutMd}`;
                 html += `
                     <li class="nav-item">
-                        <a href="#" class="${linkClass} ${isActive ? 'active' : ''}" data-path="${item.path}">
+                        <a href="${fullUrl}" class="${linkClass} ${isActive ? 'active' : ''}" data-path="${item.path}">
                             ${linkTitle}
                         </a>
                     </li>
@@ -348,13 +353,12 @@ class DocsApp {
     }
 
     setupInternalLinks(container) {
-        const links = container.querySelectorAll('a[href^="#"], a[href$=".md"]');
+        const links = container.querySelectorAll('a[href^="#"], a[href*="' + window.location.origin + '"]');
         
         links.forEach(link => {
             const href = link.getAttribute('href');
             
             if (href.startsWith('#')) {
-                // Handle anchor links
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const target = document.querySelector(href);
@@ -362,11 +366,16 @@ class DocsApp {
                         target.scrollIntoView({ behavior: 'smooth' });
                     }
                 });
-            } else if (href.endsWith('.md')) {
-                // Handle internal markdown links
+            } else if (href.includes(window.location.origin)) {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.navigateToPath(href);
+                    const url = new URL(href);
+                    const pathSegments = url.pathname.split('/').filter(s => s);
+                    if (pathSegments.length > 1) {
+                        const pathWithoutVersion = pathSegments.slice(1).join('/');
+                        const cleanPath = pathWithoutVersion.replace('.md', '');
+                        this.navigateToPath(cleanPath + '.md');
+                    }
                 });
             }
         });

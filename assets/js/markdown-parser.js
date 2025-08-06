@@ -275,6 +275,12 @@ class MarkdownParser {
         });
 
         text = text.replace(this.rules.link, (match, text, url) => {
+            if (url.endsWith('.md')) {
+                const urlWithoutMd = url.replace('.md', '');
+                const fullUrl = `${window.location.origin}/${window.location.pathname.split('/')[1]}/${urlWithoutMd}`;
+                return `<a href="${fullUrl}">${text}</a>`;
+            }
+            // For external links, show the URL
             return `<a href="${url}">${text}</a>`;
         });
 
