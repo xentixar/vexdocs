@@ -20,7 +20,20 @@ A modern, fast, and lightweight documentation tool with multi-version support an
 
 Vexdocs is designed to get you up and running in seconds. No complex setup, no heavy dependencies.
 
-### Option 1: Using the Vexdocs CLI (Recommended)
+### Option 1: Create a New Project (Recommended)
+
+```bash
+# Create a new Vexdocs project
+npx create-vexdocs-app my-docs
+
+# Navigate to your project
+cd my-docs
+
+# Start development server
+npm start
+```
+
+### Option 2: Using the Vexdocs CLI
 
 ```bash
 # Start development server (auto-opens http://localhost:3000)
@@ -36,7 +49,7 @@ Vexdocs is designed to get you up and running in seconds. No complex setup, no h
 ./vexdocs help
 ```
 
-### Option 2: Using npm scripts
+### Option 3: Using npm scripts
 
 ```bash
 # Quick start - install and run
