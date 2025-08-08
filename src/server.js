@@ -157,20 +157,27 @@ class DocsServer {
         const orderedNavigation = [];
         const unorderedItems = [...navigation];
 
-        const readmeIndex = unorderedItems.findIndex(item => 
-            item.type === 'file' && (item.path === 'README.md' || item.name === 'README')
-        );
-        if (readmeIndex !== -1) {
-            orderedNavigation.push(unorderedItems[readmeIndex]);
-            unorderedItems.splice(readmeIndex, 1);
+        if (!folderOrder) {
+            const readmeIndex = unorderedItems.findIndex(item => 
+                item.type === 'file' && (item.path === 'README.md' || item.name === 'README')
+            );
+            if (readmeIndex !== -1) {
+                orderedNavigation.push(unorderedItems[readmeIndex]);
+                unorderedItems.splice(readmeIndex, 1);
+            }
         }
 
         orderConfig.forEach(orderItem => {
             if (typeof orderItem === 'string') {
-                const index = unorderedItems.findIndex(item => 
-                    (item.type === 'file' && item.path === orderItem) ||
-                    (item.type === 'folder' && item.name === orderItem)
-                );
+                const index = unorderedItems.findIndex(item => {
+                    if (item.type === 'file') {
+                        return item.path === orderItem || item.name === orderItem.replace('.md', '');
+                    }
+                    if (item.type === 'folder') {
+                        return item.name === orderItem;
+                    }
+                    return false;
+                });
                 if (index !== -1) {
                     orderedNavigation.push(unorderedItems[index]);
                     unorderedItems.splice(index, 1);
