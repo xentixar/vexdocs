@@ -1,6 +1,6 @@
 {
   "name": "vexdocs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A modern, fast, and lightweight documentation tool with multi-version support and built-in markdown rendering. Create beautiful documentation websites without any external dependencies.",
   "main": "src/server.js",
   "bin": {
