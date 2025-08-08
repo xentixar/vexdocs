@@ -242,6 +242,12 @@ class DocsApp {
         
         await this.loadContent(path);
         
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+        
         if (updateUrl) {
             this.updateUrl();
             this.updateCanonicalUrl();
