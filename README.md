@@ -45,6 +45,9 @@ npm start
 # Build static site for production deployment
 ./vexdocs build
 
+# Build prerendered site with SEO optimization
+./vexdocs buildStatic
+
 # Show help and all available commands
 ./vexdocs help
 ```
@@ -60,6 +63,9 @@ npm run dev
 
 # Build optimized static site
 npm run build
+
+# Build prerendered site with full SEO optimization  
+npm run build:static
 
 # Start production server
 npm run serve
@@ -226,6 +232,7 @@ Vexdocs provides a comprehensive CLI for all your documentation needs:
 
 # Production
 ./vexdocs build     # Generate optimized static site in dist/ folder
+./vexdocs buildStatic # Generate prerendered site with full SEO optimization
 ./vexdocs serve --production  # Serve built static files
 
 # Utilities
@@ -263,20 +270,32 @@ This generates an optimized static site in the `dist/` directory with:
 
 #### GitHub Pages
 ```bash
-# Build and push to gh-pages branch
-./vexdocs build
+# Build with SEO optimization for public docs
+./vexdocs buildStatic
 cd dist
 git init
 git add .
 git commit -m "Deploy documentation"
 git push origin main:gh-pages
+
+# Alternative: Standard build for internal docs
+./vexdocs build
+cd dist
+git init
+git add .
+git commit -m "Deploy documentation"  
+git push origin main:gh-pages
 ```
 
 #### Netlify
 - Connect your repository
-- Set build command: `./vexdocs build`
+- Set build command: `./vexdocs build` (or `./vexdocs buildStatic` for SEO)
 - Set publish directory: `dist`
 - Deploy automatically on every push
+
+**Build Command Recommendations:**
+- For public documentation: `./vexdocs buildStatic` (better SEO)
+- For internal docs: `./vexdocs build` (faster builds)
 
 #### Vercel
 ```bash

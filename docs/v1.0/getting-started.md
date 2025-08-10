@@ -251,12 +251,34 @@ Vexdocs includes built-in search:
 
 ### 1. Build Static Site
 
+For regular static site generation:
 ```bash
 # Generate optimized static site
 npm run build
 ```
 
-This creates a `dist/` folder with:
+For SEO-optimized prerendered site:
+```bash
+# Generate prerendered site with full SEO optimization
+npm run build:static
+```
+
+**Choose the Right Build:**
+
+- **`npm run build`** - Client-side rendered static site
+  - ✅ Fast navigation with JavaScript
+  - ✅ Smaller initial bundle size
+  - ✅ Great for internal documentation
+  - ❌ Limited SEO capabilities
+
+- **`npm run build:static`** - Prerendered static site
+  - ✅ Full SEO optimization
+  - ✅ Better social media sharing
+  - ✅ Faster initial page loads
+  - ✅ Works without JavaScript
+  - ✅ Search engine friendly
+
+Both create a `dist/` folder with:
 - Minified HTML, CSS, and JavaScript
 - Optimized images and assets
 - SEO-friendly meta tags

@@ -68,6 +68,9 @@ npm run dev
 # Build optimized static site for production
 npm run build
 
+# Build prerendered static site with SEO optimization
+npm run build:static
+
 # Serve built static files
 npm run serve
 
@@ -160,8 +163,10 @@ Vexdocs includes a powerful markdown parser with extensive features:
 # Getting Started
 
 Welcome to **Vexdocs**! Here's a quick example.
+```
 
 ## Code Block
+
 ```javascript
 const docs = new Vexdocs();
 docs.serve({ port: 3000 });
@@ -173,7 +178,6 @@ docs.serve({ port: 3000 });
 - ✅ Mobile responsive
 
 > **Tip**: Use search to quickly find content!
-```
 
 ## 🚀 Deployment
 
@@ -181,11 +185,30 @@ Deploy your documentation to any static hosting platform:
 
 ### 1. Build Static Site
 
+For regular static site generation:
 ```bash
 npm run build
 ```
 
-This creates an optimized `dist/` folder with:
+For SEO-optimized prerendered site:
+```bash
+npm run build:static
+```
+
+**Build Options:**
+
+- **`npm run build`** - Creates a fast, client-side rendered static site ideal for:
+  - Development environments
+  - Internal documentation
+  - Fast loading with JavaScript navigation
+
+- **`npm run build:static`** - Creates a prerendered site optimized for:
+  - SEO and search engines
+  - Social media sharing
+  - Better initial page load performance
+  - Public-facing documentation
+
+Both commands create an optimized `dist/` folder with:
 - Minified HTML, CSS, and JavaScript
 - Optimized images and assets
 - SEO-friendly meta tags

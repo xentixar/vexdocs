@@ -33,8 +33,11 @@ Before deploying your documentation, ensure everything is ready:
 
 ## 🏗️ Building Your Site
 
-### Local Build Process
+### Build Options
 
+Vexdocs provides two build modes for different use cases:
+
+**Standard Build (Client-Side Rendered)**
 ```bash
 # Clean any previous builds
 npm run clean
@@ -45,6 +48,30 @@ npm run build
 # Verify build completed
 ls dist/
 ```
+
+**Prerendered Build (SEO Optimized)**
+```bash
+# Clean any previous builds  
+npm run clean
+
+# Build prerendered static site with full SEO
+npm run build:static
+
+# Verify build completed
+ls dist/
+```
+
+### When to Use Each Build
+
+| Feature | Standard Build | Prerendered Build |
+|---------|---------------|-------------------|
+| **Best For** | Internal docs, dashboards | Public docs, marketing sites |
+| **SEO** | Limited | Full optimization |
+| **Initial Load** | Faster (smaller JS) | Slower (prerendered HTML) |
+| **Navigation** | Client-side (fast) | Full page loads |
+| **Social Sharing** | Limited previews | Rich previews |
+| **Search Engines** | JavaScript required | Fully indexed |
+| **File Size** | Smaller | Larger (prerendered content) |
 
 ### Build Output Structure
 

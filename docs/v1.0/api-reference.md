@@ -38,6 +38,31 @@ vexdocs build
 vexdocs build
 ```
 
+#### `vexdocs buildStatic`
+Generate prerendered static site with full SEO optimization.
+
+```bash
+vexdocs buildStatic
+# or using npm script
+npm run build:static
+```
+
+**Examples:**
+```bash
+# Generate prerendered site with SEO optimization
+vexdocs buildStatic
+
+# Alternative using npm script
+npm run build:static
+```
+
+**Features:**
+- Full server-side rendering for SEO
+- Optimized social media sharing
+- Better search engine indexing
+- Faster initial page loads
+- Works without JavaScript
+
 #### `vexdocs dev`
 Development mode with enhanced logging.
 
@@ -157,7 +182,6 @@ author: "Author Name"
 
 ### Code Block Features
 
-````markdown
 ```javascript
 const vexdocs = require('vexdocs');
 const server = new vexdocs.Server({
@@ -165,7 +189,6 @@ const server = new vexdocs.Server({
   docs: './docs'
 });
 ```
-````
 
 **Supported languages for syntax highlighting:**
 - **PHP** (new in v1.0) - Full PHP syntax with variables, functions, and modern features

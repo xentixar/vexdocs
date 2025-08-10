@@ -10,6 +10,7 @@
     "start": "./vexdocs serve",
     "dev": "./vexdocs dev",
     "build": "./vexdocs build",
+    "build:static": "./vexdocs buildStatic",
     "serve": "./vexdocs serve",
     "clean": "./vexdocs clean",
     "test": "echo \"Error: no test specified\" && exit 1",
