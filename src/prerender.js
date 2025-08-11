@@ -655,7 +655,7 @@ class PrerenderBuilder {
     generateVersionOptions(currentVersion) {
         return Object.entries(this.config.versions)
             .map(([version, label]) => 
-                `<option value="${version}"${version === currentVersion ? ' selected' : ''}>${label}</option>`
+                `<option value="${version}"${version === currentVersion ? ' selected' : ''}>${version} ${label ? `(${label})` : ''}</option>`
             )
             .join('\n                        ');
     }
